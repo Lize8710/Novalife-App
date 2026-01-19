@@ -1,11 +1,28 @@
 "use client";
 import React, { useState } from 'react';
-import { characterMethods } from '@/api/mongoCharacterClient';
-// Remplacement de base44.entities.Character par characterMethods
-const base44 = {
-  entities: {
-    Character: characterMethods
-  }
+
+// Fonctions pour appeler les API routes Next.js côté client
+const api = {
+  list: async () => {
+    const res = await fetch('/api/characters');
+    if (!res.ok) throw new Error('Erreur lors du chargement des personnages');
+    return res.json();
+  },
+  create: async (data) => {
+    const res = await fetch('/api/characters', { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
+    if (!res.ok) throw new Error('Erreur lors de la création');
+    return res.json();
+  },
+  update: async (id, data) => {
+    const res = await fetch(`/api/characters/${id}`, { method: 'PUT', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
+    if (!res.ok) throw new Error('Erreur lors de la mise à jour');
+    return res.json();
+  },
+  delete: async (id) => {
+    const res = await fetch(`/api/characters/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Erreur lors de la suppression');
+    return res.json();
+  },
 };
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -46,7 +63,7 @@ export default function Characters() {
 
   const { data: characters = [], isLoading } = useQuery({
     queryKey: ['characters'],
-    queryFn: () => base44.entities.Character.list('created_at'),
+    queryFn: () => api.list(),
     // Pas de cache prolongé, configuration par défaut
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -57,7 +74,7 @@ export default function Characters() {
   };
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Character.create(data),
+    mutationFn: (data) => api.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['characters'] });
       setShowForm(false);
@@ -68,7 +85,7 @@ export default function Characters() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Character.update(id, data),
+    mutationFn: ({ id, data }) => api.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['characters'] });
       setShowForm(false);
@@ -80,7 +97,7 @@ export default function Characters() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Character.delete(id),
+    mutationFn: (id) => api.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['characters'] });
       setDeletingCharacter(null);
