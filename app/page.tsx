@@ -7,7 +7,12 @@ import Characters from "@/components/Characters";
 export default function Home() {
   const router = useRouter();
   useEffect(() => {
-      // Suppression de la redirection vers la page de login
+    if (typeof window !== "undefined") {
+      const isAuth = localStorage.getItem("novalife_auth");
+      if (!isAuth) {
+        router.replace("/login");
+      }
+    }
   }, [router]);
   return <Characters />;
 }
