@@ -16,7 +16,8 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ id
   }
 }
 
-export async function PUT(request, { params }) {
+import type { NextRequest } from 'next/server';
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const data = await request.json();
     const client = await clientPromise;
