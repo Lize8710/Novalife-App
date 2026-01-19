@@ -4,8 +4,8 @@ import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
 // GET one character
-export async function GET(request: NextRequest, context: { params: { id: string } }) {
-  const { id } = context.params;
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
   try {
     const client = await clientPromise;
@@ -19,8 +19,8 @@ export async function GET(request: NextRequest, context: { params: { id: string 
 }
 
 // PUT update character
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
-  const { id } = context.params;
+export async function PUT(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const data = await request.json();
   const now = new Date().toISOString();
   try {
@@ -37,8 +37,8 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
 }
 
 // DELETE character
-export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
-  const { id } = context.params;
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   try {
     const client = await clientPromise;
     const db = client.db();
