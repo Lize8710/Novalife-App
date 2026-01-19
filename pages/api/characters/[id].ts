@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else if (req.method === 'PUT') {
     try {
-      const data = req.body;
+      const data = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
       const now = new Date().toISOString();
       const result = await collection.updateOne(
         { _id: new ObjectId(id) },
