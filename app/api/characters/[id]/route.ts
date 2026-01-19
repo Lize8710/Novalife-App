@@ -6,6 +6,7 @@ import { ObjectId } from 'mongodb';
 // GET one character
 export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
+  console.log('GET character id:', id);
   if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
   try {
     const client = await clientPromise;
@@ -21,6 +22,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 // PUT update character
 export async function PUT(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
+  console.log('PUT character id:', id);
   const data = await request.json();
   const now = new Date().toISOString();
   try {
@@ -39,6 +41,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ id:
 // DELETE character
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
+  console.log('DELETE character id:', id);
   try {
     const client = await clientPromise;
     const db = client.db();
