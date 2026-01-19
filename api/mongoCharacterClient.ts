@@ -1,7 +1,5 @@
 import clientPromise from '../lib/mongodb';
 import { ObjectId } from 'mongodb';
-
-import { ObjectId } from 'mongodb';
 interface Character {
   _id?: ObjectId;
   id?: string;
