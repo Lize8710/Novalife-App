@@ -32,9 +32,11 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
     doctor: '',
     medical_history: '',
     trusted_persons: [],
-    avatar_url: '',
+    avatar_url: '', // base64 ou url
     attachments: []
   });
+
+  const [avatarPreview, setAvatarPreview] = useState('');
 
   useEffect(() => {
     if (character) {
@@ -69,6 +71,7 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
         avatar_url: character.avatar_url || '',
         attachments: character.attachments || []
       });
+      setAvatarPreview(character.avatar_url || '');
     }
   }, [character]);
 
@@ -79,6 +82,22 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'avatar_url') {
+      setAvatarPreview(value);
+    }
+  };
+
+  // Gestion de l'upload local
+  const handleAvatarUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, avatar_url: reader.result }));
+        setAvatarPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -180,14 +199,21 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
             </div>
 
           <div className="space-y-2">
-            <Label htmlFor="avatar_url" className="text-slate-300">URL de l'avatar</Label>
-            <Input
-              id="avatar_url"
-              value={formData.avatar_url}
-              onChange={(e) => handleChange('avatar_url', e.target.value)}
-              placeholder="https://..."
-              className="h-11 bg-slate-800/50 border-cyan-500/30 text-cyan-100 placeholder:text-slate-500 focus:border-cyan-500 focus:ring-cyan-500/50"
+            <Label htmlFor="avatar_upload" className="text-slate-300">Photo du patient</Label>
+            <input
+              id="avatar_upload"
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarUpload}
+              className="block w-full text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100"
             />
+            {avatarPreview && (
+              <img
+                src={avatarPreview}
+                alt="Aperçu avatar"
+                className="mt-2 rounded-lg shadow-md max-h-32 border border-cyan-500/30"
+              />
+            )}
           </div>
         </div>
 
