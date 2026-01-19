@@ -22,14 +22,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Plus, Search, Loader2, Users } from 'lucide-react';
-import { Grid } from 'react-virtualized';
+import dynamic from 'next/dynamic';
+
+const VirtualizedGrid = dynamic(() => import('./VirtualizedGrid'), { ssr: false });
 
 import CharacterCard from '@/components/Characters/CharactersCard';
 import CharacterForm from '@/components/Characters/CharacterForm';
 import CharacterDetails from '@/components/Characters/CharacterDetails';
 
 export default function Characters() {
-    // Dimensions pour react-virtualized Grid
+    // Prépare les props pour le composant virtualisé
     const columnCount = 3;
     const rowHeight = 320;
     const columnWidth = 380;
@@ -202,31 +204,18 @@ export default function Characters() {
           </motion.div>
         ) : (
             <div style={{ width: gridWidth, margin: '0 auto' }}>
-              <Grid
-                cellRenderer={({ columnIndex, rowIndex, key, style }) => {
-                  const idx = rowIndex * columnCount + columnIndex;
-                  const character = filteredCharacters[idx];
-                  if (!character) return null;
-                  return (
-                    <div style={style} key={key}>
-                      <CharacterCard
-                        character={character}
-                        trustedPersons={getTrustedPersons(character)}
-                        allCharacters={characters}
-                        onView={setViewingCharacter}
-                        onEdit={handleEdit}
-                        onDelete={setDeletingCharacter}
-                      />
-                    </div>
-                  );
-                }}
+              <VirtualizedGrid
+                characters={filteredCharacters}
                 columnCount={columnCount}
                 columnWidth={columnWidth}
-                height={rowCount * rowHeight}
-                rowCount={rowCount}
                 rowHeight={rowHeight}
-                width={gridWidth}
-                style={{ overflow: 'visible' }}
+                gridWidth={gridWidth}
+                rowCount={rowCount}
+                onView={setViewingCharacter}
+                onEdit={handleEdit}
+                onDelete={setDeletingCharacter}
+                allCharacters={characters}
+                getTrustedPersons={getTrustedPersons}
               />
             </div>
         )}
