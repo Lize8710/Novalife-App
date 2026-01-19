@@ -1,3 +1,7 @@
+import { NextApiRequest, NextApiResponse } from 'next';
+import { ObjectId } from 'mongodb';
+import clientPromise from '../../../lib/mongodb';
+
 export const config = {
   api: {
     bodyParser: {
@@ -5,9 +9,6 @@ export const config = {
     },
   },
 };
-import { NextApiRequest, NextApiResponse } from 'next';
-import { ObjectId } from 'mongodb';
-import clientPromise from '../../../lib/mongodb';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'PUT') {
