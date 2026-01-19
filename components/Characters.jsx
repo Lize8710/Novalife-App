@@ -41,8 +41,7 @@ export default function Characters() {
   const { data: characters = [], isLoading } = useQuery({
     queryKey: ['characters'],
     queryFn: () => base44.entities.Character.list('created_at'),
-    staleTime: 1000 * 60 * 30, // 30 minutes
-    cacheTime: 1000 * 60 * 120, // 2 heures
+    // Pas de cache prolongé, configuration par défaut
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
