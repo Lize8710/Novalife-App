@@ -6,6 +6,10 @@ import { UserCheck, X, Plus } from 'lucide-react';
 
 export default function TrustedPersonsManager({ trustedPersons = [], onChange, allCharacters = [], currentCharacterId }) {
   // Suppression de la pagination, retour à l'affichage complet
+  const [isAdding, setIsAdding] = useState(false);
+  const [patientId, setPatientId] = useState('');
+  const [manualName, setManualName] = useState('');
+  const [manualPhone, setManualPhone] = useState('');
   const handleAdd = () => {
     if (patientId) {
       onChange([...trustedPersons, { patient_id: patientId }]);
