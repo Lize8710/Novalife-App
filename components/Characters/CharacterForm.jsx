@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { characterMethods } from '@/api/mongoCharacterClient';
+// Utilisation de l'API route pour récupérer les personnages
+const api = {
+  list: async () => {
+    const res = await fetch('/api/characters');
+    if (!res.ok) throw new Error('Erreur lors du chargement des personnages');
+    return res.json();
+  },
+};
 import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +23,7 @@ const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 export default function CharacterForm({ character, onSubmit, onCancel, isLoading }) {
   const { data: allCharacters = [] } = useQuery({
     queryKey: ['characters'],
-    queryFn: () => characterMethods.list(),
+    queryFn: () => api.list(),
   });
 
   const [formData, setFormData] = useState({
