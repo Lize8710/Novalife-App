@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,24 @@ export default function TrustedPersonsManager({ trustedPersons = [], onChange, a
   const [patientId, setPatientId] = useState('');
   const [manualName, setManualName] = useState('');
   const [manualPhone, setManualPhone] = useState('');
+  const [patients, setPatients] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const PAGE_SIZE = 10;
 
+  useEffect(() => {
+    // Initial load
+    setPatients(allCharacters.slice(0, PAGE_SIZE));
+    setHasMore(allCharacters.length > PAGE_SIZE);
+  }, [allCharacters]);
+
+  const loadMore = () => {
+    const nextPage = page + 1;
+    const newPatients = allCharacters.slice(0, nextPage * PAGE_SIZE);
+    setPatients(newPatients);
+    setPage(nextPage);
+    setHasMore(allCharacters.length > nextPage * PAGE_SIZE);
+  };
   const handleAdd = () => {
     if (patientId) {
       onChange([...trustedPersons, { patient_id: patientId }]);
@@ -80,7 +97,7 @@ export default function TrustedPersonsManager({ trustedPersons = [], onChange, a
               className="h-11 w-full rounded-md bg-slate-800/50 border border-indigo-500/30 text-cyan-100 px-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
             >
               <option value="">Aucun</option>
-              {allCharacters
+              {patients
                 .filter(c => c.id !== currentCharacterId)
                 .map(c => (
                   <option key={c.id} value={c.id}>
@@ -88,6 +105,9 @@ export default function TrustedPersonsManager({ trustedPersons = [], onChange, a
                   </option>
                 ))}
             </select>
+            {hasMore && (
+              <Button type="button" onClick={loadMore} className="mt-2 w-full text-xs">Charger plus...</Button>
+            )}
           </div>
 
           <div className="relative py-2">
