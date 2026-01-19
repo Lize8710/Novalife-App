@@ -22,15 +22,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Plus, Search, Loader2, Users } from 'lucide-react';
-import { FixedSizeList as List } from 'react-window';
+import { List } from 'react-virtualized';
 
 import CharacterCard from '@/components/Characters/CharactersCard';
 import CharacterForm from '@/components/Characters/CharacterForm';
 import CharacterDetails from '@/components/Characters/CharacterDetails';
 
 export default function Characters() {
-    // Dimensions pour react-window
+    // Dimensions pour react-virtualized
     const itemHeight = 320;
+    const listWidth = 1200;
+    const listHeight = 960;
   // Suppression de la pagination côté serveur
   const [showForm, setShowForm] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState(null);
@@ -197,17 +199,16 @@ export default function Characters() {
             )}
           </motion.div>
         ) : (
-            <div style={{ width: '100%', maxWidth: 1200, height: 960, margin: '0 auto' }}>
+            <div style={{ width: '100%', maxWidth: listWidth, height: listHeight, margin: '0 auto' }}>
               <List
-                height={960}
-                itemCount={filteredCharacters.length}
-                itemSize={itemHeight}
-                width={1200}
-              >
-                {({ index, style }) => {
+                width={listWidth}
+                height={listHeight}
+                rowCount={filteredCharacters.length}
+                rowHeight={itemHeight}
+                rowRenderer={({ index, key, style }) => {
                   const character = filteredCharacters[index];
                   return (
-                    <div style={style} key={character.id}>
+                    <div style={style} key={key}>
                       <CharacterCard
                         character={character}
                         trustedPersons={getTrustedPersons(character)}
@@ -219,7 +220,7 @@ export default function Characters() {
                     </div>
                   );
                 }}
-              </List>
+              />
             </div>
         )}
       </main>
