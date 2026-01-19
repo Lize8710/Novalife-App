@@ -23,6 +23,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Protection par mot de passe
+  if (typeof window !== "undefined") {
+    const isAuth = typeof window !== "undefined" && localStorage.getItem("novalife_auth") === "true";
+    const isLoginPage = window.location.pathname === "/login";
+    if (!isAuth && !isLoginPage) {
+      window.location.replace("/login");
+      return null;
+    }
+  }
   return (
     <html lang="en">
       <body
