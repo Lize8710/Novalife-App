@@ -1,6 +1,12 @@
 "use client";
 import React, { useState } from 'react';
-import { base44 } from '@/api/supabaseClient';
+import { characterMethods } from '@/api/mongoCharacterClient';
+// Remplacement de base44.entities.Character par characterMethods
+const base44 = {
+  entities: {
+    Character: characterMethods
+  }
+};
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
