@@ -1,8 +1,9 @@
 import clientPromise from '../lib/mongodb';
 import { ObjectId } from 'mongodb';
 
+import { ObjectId } from 'mongodb';
 interface Character {
-  _id?: string;
+  _id?: ObjectId;
   id?: string;
   first_name: string;
   last_name: string;
@@ -55,12 +56,14 @@ export const characterMethods = {
       const client = await clientPromise;
       const db = client.db();
       const now = new Date().toISOString();
+      // On retire _id si présent pour éviter le conflit de type
+      const { _id, ...dataWithoutId } = data;
       const result = await db.collection('characters').insertOne({
-        ...data,
+        ...dataWithoutId,
         created_at: now,
         updated_at: now,
       });
-      return { ...data, _id: result.insertedId, created_at: now, updated_at: now };
+      return { ...dataWithoutId, _id: result.insertedId, created_at: now, updated_at: now };
     } catch (error) {
       console.error('Error creating character:', error);
       throw error;
