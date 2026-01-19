@@ -41,7 +41,7 @@ export default function LoginPage() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'url(/futuristic-bg.jpg) center center / cover no-repeat, #0f2027',
+      background: 'radial-gradient(circle at 20% 20%, #0f2027 0%, #2c5364 100%)',
       color: '#fff',
     }}>
       <form onSubmit={handleSubmit} style={{
