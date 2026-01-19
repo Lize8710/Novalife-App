@@ -22,7 +22,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Plus, Search, Loader2, Users } from 'lucide-react';
-import { FixedSizeGrid as Grid } from 'react-window';
+import { FixedSizeList as List } from 'react-window';
 
 import CharacterCard from '@/components/Characters/CharactersCard';
 import CharacterForm from '@/components/Characters/CharacterForm';
@@ -30,9 +30,7 @@ import CharacterDetails from '@/components/Characters/CharacterDetails';
 
 export default function Characters() {
     // Dimensions pour react-window
-    const columnCount = 3;
-    const rowHeight = 320;
-    const columnWidth = 380;
+    const itemHeight = 320;
   // Suppression de la pagination côté serveur
   const [showForm, setShowForm] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState(null);
@@ -199,19 +197,15 @@ export default function Characters() {
             )}
           </motion.div>
         ) : (
-            <div style={{ width: columnCount * columnWidth, height: 960, margin: '0 auto' }}>
-              <Grid
-                columnCount={columnCount}
-                columnWidth={columnWidth}
+            <div style={{ width: '100%', maxWidth: 1200, height: 960, margin: '0 auto' }}>
+              <List
                 height={960}
-                rowCount={Math.ceil(filteredCharacters.length / columnCount)}
-                rowHeight={rowHeight}
-                width={columnCount * columnWidth}
+                itemCount={filteredCharacters.length}
+                itemSize={itemHeight}
+                width={1200}
               >
-                {({ columnIndex, rowIndex, style }) => {
-                  const idx = rowIndex * columnCount + columnIndex;
-                  const character = filteredCharacters[idx];
-                  if (!character) return null;
+                {({ index, style }) => {
+                  const character = filteredCharacters[index];
                   return (
                     <div style={style} key={character.id}>
                       <CharacterCard
@@ -225,7 +219,7 @@ export default function Characters() {
                     </div>
                   );
                 }}
-              </Grid>
+              </List>
             </div>
         )}
       </main>
