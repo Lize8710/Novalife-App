@@ -22,17 +22,19 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Plus, Search, Loader2, Users } from 'lucide-react';
-import { List } from 'react-virtualized';
+import { Grid } from 'react-virtualized';
 
 import CharacterCard from '@/components/Characters/CharactersCard';
 import CharacterForm from '@/components/Characters/CharacterForm';
 import CharacterDetails from '@/components/Characters/CharacterDetails';
 
 export default function Characters() {
-    // Dimensions pour react-virtualized
-    const itemHeight = 320;
-    const listWidth = 1200;
-    const listHeight = 960;
+    // Dimensions pour react-virtualized Grid
+    const columnCount = 3;
+    const rowHeight = 320;
+    const columnWidth = 380;
+    const gridWidth = columnCount * columnWidth;
+    const rowCount = Math.ceil(filteredCharacters.length / columnCount);
   // Suppression de la pagination côté serveur
   const [showForm, setShowForm] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState(null);
@@ -199,14 +201,12 @@ export default function Characters() {
             )}
           </motion.div>
         ) : (
-            <div style={{ width: '100%', maxWidth: listWidth, height: listHeight, margin: '0 auto' }}>
-              <List
-                width={listWidth}
-                height={listHeight}
-                rowCount={filteredCharacters.length}
-                rowHeight={itemHeight}
-                rowRenderer={({ index, key, style }) => {
-                  const character = filteredCharacters[index];
+            <div style={{ width: gridWidth, margin: '0 auto' }}>
+              <Grid
+                cellRenderer={({ columnIndex, rowIndex, key, style }) => {
+                  const idx = rowIndex * columnCount + columnIndex;
+                  const character = filteredCharacters[idx];
+                  if (!character) return null;
                   return (
                     <div style={style} key={key}>
                       <CharacterCard
@@ -220,6 +220,13 @@ export default function Characters() {
                     </div>
                   );
                 }}
+                columnCount={columnCount}
+                columnWidth={columnWidth}
+                height={rowCount * rowHeight}
+                rowCount={rowCount}
+                rowHeight={rowHeight}
+                width={gridWidth}
+                style={{ overflow: 'visible' }}
               />
             </div>
         )}
