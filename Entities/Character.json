@@ -1,0 +1,122 @@
+{
+  "name": "Character",
+  "type": "object",
+  "properties": {
+    "first_name": {
+      "type": "string",
+      "description": "Pr\u00e9nom du personnage"
+    },
+    "last_name": {
+      "type": "string",
+      "description": "Nom de famille du personnage"
+    },
+    "birth_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date de naissance du personnage"
+    },
+    "nationality": {
+      "type": "string",
+      "description": "Nationalit\u00e9 du personnage"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Num\u00e9ro de t\u00e9l\u00e9phone"
+    },
+    "social_score": {
+      "type": "string",
+      "description": "Score social du patient"
+    },
+    "profession": {
+      "type": "string",
+      "description": "M\u00e9tier du personnage"
+    },
+    "address": {
+      "type": "string",
+      "description": "Adresse du personnage"
+    },
+    "blood_type": {
+      "type": "string",
+      "enum": [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-"
+      ],
+      "description": "Groupe sanguin"
+    },
+    "doctor": {
+      "type": "string",
+      "description": "M\u00e9decin traitant"
+    },
+    "medical_history": {
+      "type": "string",
+      "description": "Ant\u00e9c\u00e9dents m\u00e9dicaux"
+    },
+    "trusted_persons": {
+      "type": "array",
+      "description": "Personnes de confiance",
+      "items": {
+        "type": "object",
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "description": "ID du patient existant"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nom complet (saisie manuelle)"
+          },
+          "phone": {
+            "type": "string",
+            "description": "T\u00e9l\u00e9phone (saisie manuelle)"
+          }
+        }
+      }
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "URL de l'avatar du personnage"
+    },
+    "attachments": {
+      "type": "array",
+      "description": "Documents, images et liens attach\u00e9s",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "document",
+              "image",
+              "link"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "added_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "first_name",
+    "last_name"
+  ],
+  "rls": {
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
