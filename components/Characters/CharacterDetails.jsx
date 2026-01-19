@@ -127,7 +127,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
                 <div className="space-y-1.5">
                   {safeTrustedPersons.map((person, index) => {
                     if (person.patient_id) {
-                      const patient = allCharacters.find(c => c.id === person.patient_id);
+                      const patient = allCharacters.find(c => c._id === person.patient_id);
                       if (patient) {
                         return (
                           <button 

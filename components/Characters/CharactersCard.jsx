@@ -136,7 +136,7 @@ export default function CharacterCard({ character, onView, onEdit, onDelete, tru
                 {safeTrustedPersons.map((person, index) => {
                   let displayName = '';
                   if (person.patient_id) {
-                    const patient = allCharacters.find(c => c.id === person.patient_id);
+                    const patient = allCharacters.find(c => c._id === person.patient_id);
                     if (patient) {
                       displayName = `${patient.first_name} ${patient.last_name}`;
                     }
