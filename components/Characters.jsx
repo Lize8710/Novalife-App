@@ -22,21 +22,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Plus, Search, Loader2, Users } from 'lucide-react';
-import dynamic from 'next/dynamic';
 
-const VirtualizedGrid = dynamic(() => import('./VirtualizedGrid'), { ssr: false });
 
 import CharacterCard from '@/components/Characters/CharactersCard';
 import CharacterForm from '@/components/Characters/CharacterForm';
 import CharacterDetails from '@/components/Characters/CharacterDetails';
 
 export default function Characters() {
-    // Prépare les props pour le composant virtualisé
-    const columnCount = 3;
-    const rowHeight = 320;
-    const columnWidth = 380;
-    const gridWidth = columnCount * columnWidth;
-    const rowCount = Math.ceil(filteredCharacters.length / columnCount);
   // Suppression de la pagination côté serveur
   const [showForm, setShowForm] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState(null);
@@ -203,20 +195,20 @@ export default function Characters() {
             )}
           </motion.div>
         ) : (
-            <div style={{ width: gridWidth, margin: '0 auto' }}>
-              <VirtualizedGrid
-                characters={filteredCharacters}
-                columnCount={columnCount}
-                columnWidth={columnWidth}
-                rowHeight={rowHeight}
-                gridWidth={gridWidth}
-                rowCount={rowCount}
-                onView={setViewingCharacter}
-                onEdit={handleEdit}
-                onDelete={setDeletingCharacter}
-                allCharacters={characters}
-                getTrustedPersons={getTrustedPersons}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <AnimatePresence>
+                {filteredCharacters.map((character) => (
+                  <CharacterCard
+                    key={character.id}
+                    character={character}
+                    trustedPersons={getTrustedPersons(character)}
+                    allCharacters={characters}
+                    onView={setViewingCharacter}
+                    onEdit={handleEdit}
+                    onDelete={setDeletingCharacter}
+                  />
+                ))}
+              </AnimatePresence>
             </div>
         )}
       </main>
