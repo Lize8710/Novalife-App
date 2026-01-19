@@ -1,8 +1,0 @@
-export default function LoginPage() {
-  return (
-    <div>
-      <h1>Page de connexion</h1>
-      <p>Contenu original restauré.</p>
-    </div>
-  );
-}
