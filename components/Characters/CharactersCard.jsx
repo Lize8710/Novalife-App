@@ -19,6 +19,7 @@ const bloodTypeColors = {
 };
 
 export default function CharacterCard({ character, onView, onEdit, onDelete, trustedPersons = [], allCharacters = [] }) {
+  const safeTrustedPersons = Array.isArray(trustedPersons) ? trustedPersons : [];
   const initials = `${character.first_name?.[0] || ''}${character.last_name?.[0] || ''}`.toUpperCase();
   
   return (
@@ -126,13 +127,13 @@ export default function CharacterCard({ character, onView, onEdit, onDelete, tru
               </div>
             )}
 
-            {trustedPersons.length > 0 && (
+            {safeTrustedPersons.length > 0 && (
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 text-xs text-indigo-400 font-medium">
                   <UserCheck className="w-3.5 h-3.5" />
-                  Personne{trustedPersons.length > 1 ? 's' : ''} de confiance
+                  Personne{safeTrustedPersons.length > 1 ? 's' : ''} de confiance
                 </div>
-                {trustedPersons.map((person, index) => {
+                {safeTrustedPersons.map((person, index) => {
                   let displayName = '';
                   if (person.patient_id) {
                     const patient = allCharacters.find(c => c.id === person.patient_id);
@@ -153,12 +154,17 @@ export default function CharacterCard({ character, onView, onEdit, onDelete, tru
               </div>
             )}
 
-            {character.attachments && character.attachments.length > 0 && (
+            {/* Filter out trusted persons if they were wrongly stored as attachments */}
+            {character.attachments && Array.isArray(character.attachments) && character.attachments.filter(att => !att.name || !att.phone).length > 0 && (
               <div className="flex items-center gap-3 text-sm">
                 <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
                   <Paperclip className="w-4 h-4 text-amber-400" />
                 </div>
-                <span className="text-slate-300">{character.attachments.length} document{character.attachments.length > 1 ? 's' : ''}</span>
+                <span className="text-slate-300">{
+                  character.attachments.filter(att => !att.name || !att.phone).length
+                } document{
+                  character.attachments.filter(att => !att.name || !att.phone).length > 1 ? 's' : ''
+                }</span>
               </div>
             )}
             </div>

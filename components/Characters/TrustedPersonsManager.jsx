@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { UserCheck, X, Plus } from 'lucide-react';
 
 export default function TrustedPersonsManager({ trustedPersons = [], onChange, allCharacters = [], currentCharacterId }) {
+  // Always ensure trustedPersons is an array
+  const safeTrustedPersons = Array.isArray(trustedPersons) ? trustedPersons : [];
   // Suppression de la pagination, retour à l'affichage complet
   const [isAdding, setIsAdding] = useState(false);
   const [patientId, setPatientId] = useState('');
@@ -43,9 +45,9 @@ export default function TrustedPersonsManager({ trustedPersons = [], onChange, a
 
   return (
     <div className="space-y-3">
-      {trustedPersons.length > 0 && (
+      {safeTrustedPersons.length > 0 && (
         <div className="space-y-2">
-          {trustedPersons.map((person, index) => (
+          {safeTrustedPersons.map((person, index) => (
             <div
               key={index}
               className="flex items-center gap-3 p-3 rounded-lg bg-indigo-500/10 border border-indigo-500/30"

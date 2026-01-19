@@ -48,7 +48,17 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
   useEffect(() => {
     if (character) {
       // Migration des anciennes données vers le nouveau format
-      let trustedPersons = character.trusted_persons || [];
+
+      // Always ensure trustedPersons is an array (parse if string)
+      let trustedPersons = character.trusted_persons;
+      if (typeof trustedPersons === 'string') {
+        try {
+          trustedPersons = JSON.parse(trustedPersons);
+        } catch {
+          trustedPersons = [];
+        }
+      }
+      if (!Array.isArray(trustedPersons)) trustedPersons = [];
 
       // Si l'ancien format existe, le migrer
       if (!trustedPersons.length) {

@@ -21,6 +21,8 @@ const bloodTypeColors = {
 };
 
 export default function CharacterDetails({ character, onClose, trustedPersons = [], allCharacters = [], onViewTrustedPerson }) {
+  // Always ensure trustedPersons is an array
+  const safeTrustedPersons = Array.isArray(trustedPersons) ? trustedPersons : [];
     const [showModal, setShowModal] = React.useState(false);
   const initials = `${character.first_name?.[0] || ''}${character.last_name?.[0] || ''}`.toUpperCase();
 
@@ -115,7 +117,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
           <InfoRow icon={MapPin} label="Adresse" value={character.address} />
           <InfoRow icon={Stethoscope} label="Médecin traitant" value={character.doctor ? `Dr. ${character.doctor}` : null} />
 
-          {trustedPersons.length > 0 && (
+          {safeTrustedPersons.length > 0 && (
             <div className="flex items-start gap-4 py-3">
               <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
                 <UserCheck className="w-5 h-5 text-indigo-400" />
@@ -123,7 +125,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
               <div className="flex-1">
                 <p className="text-xs font-medium text-indigo-400/70 uppercase tracking-wider mb-2">Personnes de confiance</p>
                 <div className="space-y-1.5">
-                  {trustedPersons.map((person, index) => {
+                  {safeTrustedPersons.map((person, index) => {
                     if (person.patient_id) {
                       const patient = allCharacters.find(c => c.id === person.patient_id);
                       if (patient) {
@@ -164,7 +166,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
           </div>
         )}
 
-        {character.attachments && character.attachments.length > 0 && (
+        {Array.isArray(character.attachments) && character.attachments.length > 0 && (
           <div className="mt-6 p-4 bg-amber-500/10 rounded-xl border border-amber-500/30 shadow-lg shadow-amber-500/10">
             <div className="flex items-center gap-2 text-amber-400 font-medium mb-3">
               <Paperclip className="w-4 h-4" />

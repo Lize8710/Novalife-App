@@ -13,13 +13,13 @@ const api = {
     if (!res.ok) throw new Error('Erreur lors de la création');
     return res.json();
   },
-  update: async (id, data) => {
-    const res = await fetch(`/api/characters/${id}`, { method: 'PUT', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
+  update: async (_id, data) => {
+    const res = await fetch(`/api/characters/${_id}`, { method: 'PUT', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
     if (!res.ok) throw new Error('Erreur lors de la mise à jour');
     return res.json();
   },
-  delete: async (id) => {
-    const res = await fetch(`/api/characters/${id}`, { method: 'DELETE' });
+  delete: async (_id) => {
+    const res = await fetch(`/api/characters/${_id}`, { method: 'DELETE' });
     if (!res.ok) throw new Error('Erreur lors de la suppression');
     return res.json();
   },
@@ -85,7 +85,7 @@ export default function Characters() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => api.update(id, data),
+    mutationFn: ({ _id, data }) => api.update(_id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['characters'] });
       setShowForm(false);
@@ -97,7 +97,7 @@ export default function Characters() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => api.delete(id),
+    mutationFn: (_id) => api.delete(_id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['characters'] });
       setDeletingCharacter(null);
@@ -110,7 +110,7 @@ export default function Characters() {
 
   const handleSubmit = (data) => {
     if (editingCharacter) {
-      updateMutation.mutate({ id: editingCharacter.id, data });
+      updateMutation.mutate({ _id: editingCharacter._id, data });
     } else {
       createMutation.mutate(data);
     }
@@ -225,7 +225,7 @@ export default function Characters() {
               <AnimatePresence>
                 {filteredCharacters.map((character) => (
                   <CharacterCard
-                    key={character.id}
+                    key={character._id || character.id}
                     character={character}
                     trustedPersons={getTrustedPersons(character)}
                     allCharacters={characters}
@@ -293,8 +293,8 @@ export default function Characters() {
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                if (deletingCharacter?.id) {
-                  deleteMutation.mutate(deletingCharacter.id);
+                if (deletingCharacter?._id) {
+                  deleteMutation.mutate(deletingCharacter._id);
                 }
               }}
               className="bg-rose-600 hover:bg-rose-700"

@@ -6,6 +6,8 @@ import { base44 } from '@/api/base44Client';
 import { FileText, Image as ImageIcon, Link as LinkIcon, Upload, X, Loader2, ExternalLink } from 'lucide-react';
 
 export default function AttachmentsManager({ attachments = [], onChange }) {
+  // Always ensure attachments is an array
+  const safeAttachments = Array.isArray(attachments) ? attachments : [];
   const [isAdding, setIsAdding] = useState(false);
   const [addType, setAddType] = useState('document');
   const [linkName, setLinkName] = useState('');
@@ -75,9 +77,9 @@ export default function AttachmentsManager({ attachments = [], onChange }) {
   return (
     <div className="space-y-3">
       {/* Liste des pièces jointes */}
-      {attachments.length > 0 && (
+      {safeAttachments.length > 0 && (
         <div className="space-y-2">
-          {attachments.map((attachment, index) => (
+          {safeAttachments.map((attachment, index) => (
             <div
               key={index}
               className={`flex items-center gap-3 p-3 rounded-lg border ${getColor(attachment.type)}`}
