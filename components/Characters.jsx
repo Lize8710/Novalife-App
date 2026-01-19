@@ -28,8 +28,8 @@ import CharacterForm from '@/components/Characters/CharacterForm';
 import CharacterDetails from '@/components/Characters/CharacterDetails';
 
 export default function Characters() {
-    const [page, setPage] = useState(1);
-    const PAGE_SIZE = 12;
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 12;
   const [showForm, setShowForm] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState(null);
   const [viewingCharacter, setViewingCharacter] = useState(null);
@@ -38,9 +38,12 @@ export default function Characters() {
 
   const queryClient = useQueryClient();
 
-  const { data: characters = [], isLoading } = useQuery({
-    queryKey: ['characters'],
-    queryFn: () => base44.entities.Character.list('-created_date'),
+  const {
+    data: { data: characters = [], count = 0 } = {},
+    isLoading
+  } = useQuery({
+    queryKey: ['characters', page],
+    queryFn: () => base44.entities.Character.list('created_at', page, PAGE_SIZE),
   });
 
   const getTrustedPersons = (character) => {
@@ -100,18 +103,16 @@ export default function Characters() {
     setEditingCharacter(null);
   };
 
+  // Filtrage côté client sur la page courante
   const filteredCharacters = characters.filter(char => {
     const fullName = `${char.first_name} ${char.last_name}`.toLowerCase();
     const query = searchQuery.toLowerCase();
-    return fullName.includes(query) || 
-           char.profession?.toLowerCase().includes(query) ||
-           char.blood_type?.toLowerCase().includes(query) ||
-           char.phone?.toLowerCase().includes(query);
+    return fullName.includes(query) ||
+      char.profession?.toLowerCase().includes(query) ||
+      char.blood_type?.toLowerCase().includes(query) ||
+      char.phone?.toLowerCase().includes(query);
   });
-
-    // Pagination
-    const totalPages = Math.ceil(filteredCharacters.length / PAGE_SIZE);
-    const paginatedCharacters = filteredCharacters.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.ceil(count / PAGE_SIZE);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -202,7 +203,7 @@ export default function Characters() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <AnimatePresence>
-                {paginatedCharacters.map((character) => (
+                {filteredCharacters.map((character) => (
                   <CharacterCard
                     key={character.id}
                     character={character}
