@@ -28,6 +28,8 @@ import CharacterForm from '@/components/Characters/CharacterForm';
 import CharacterDetails from '@/components/Characters/CharacterDetails';
 
 export default function Characters() {
+    const [page, setPage] = useState(1);
+    const PAGE_SIZE = 12;
   const [showForm, setShowForm] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState(null);
   const [viewingCharacter, setViewingCharacter] = useState(null);
@@ -106,6 +108,10 @@ export default function Characters() {
            char.blood_type?.toLowerCase().includes(query) ||
            char.phone?.toLowerCase().includes(query);
   });
+
+    // Pagination
+    const totalPages = Math.ceil(filteredCharacters.length / PAGE_SIZE);
+    const paginatedCharacters = filteredCharacters.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -193,21 +199,39 @@ export default function Characters() {
             )}
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence>
-              {filteredCharacters.map((character) => (
-                <CharacterCard
-                  key={character.id}
-                  character={character}
-                  trustedPersons={getTrustedPersons(character)}
-                  allCharacters={characters}
-                  onView={setViewingCharacter}
-                  onEdit={handleEdit}
-                  onDelete={setDeletingCharacter}
-                />
-              ))}
-            </AnimatePresence>
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <AnimatePresence>
+                {paginatedCharacters.map((character) => (
+                  <CharacterCard
+                    key={character.id}
+                    character={character}
+                    trustedPersons={getTrustedPersons(character)}
+                    allCharacters={characters}
+                    onView={setViewingCharacter}
+                    onEdit={handleEdit}
+                    onDelete={setDeletingCharacter}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
+            {/* Pagination controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                <Button
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                  className="px-4 py-2"
+                >Précédent</Button>
+                <span className="text-cyan-100 font-medium">Page {page} / {totalPages}</span>
+                <Button
+                  disabled={page === totalPages}
+                  onClick={() => setPage(page + 1)}
+                  className="px-4 py-2"
+                >Suivant</Button>
+              </div>
+            )}
+          </>
         )}
       </main>
 
