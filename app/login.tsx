@@ -12,10 +12,12 @@ export default function LoginPage() {
     if (typeof window !== 'undefined') {
       const isAuth = localStorage.getItem('novalife_auth');
       if (isAuth === 'true') {
-        router.replace('/');
+        setShowLogout(true);
       }
     }
   }, [router]);
+
+  const [showLogout, setShowLogout] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +27,12 @@ export default function LoginPage() {
     } else {
       setError('Mot de passe incorrect');
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('novalife_auth');
+    setShowLogout(false);
+    router.replace('/login');
   };
 
   return (
@@ -53,34 +61,53 @@ export default function LoginPage() {
           marginBottom: '20px',
           letterSpacing: '2px',
         }}>Bienvenue sur Novalife</h1>
-        <input
-          type="password"
-          placeholder="Mot de passe"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          style={{
-            padding: '12px',
-            borderRadius: '8px',
+        {showLogout ? (
+          <button type="button" onClick={handleLogout} style={{
+            background: 'linear-gradient(90deg, #ff6b6b 0%, #185a9d 100%)',
+            color: '#fff',
             border: 'none',
-            marginBottom: '16px',
-            width: '100%',
+            borderRadius: '8px',
+            padding: '12px 24px',
             fontSize: '1rem',
-          }}
-        />
-        <button type="submit" style={{
-          background: 'linear-gradient(90deg, #43cea2 0%, #185a9d 100%)',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '8px',
-          padding: '12px 24px',
-          fontSize: '1rem',
-          fontWeight: 600,
-          cursor: 'pointer',
-          boxShadow: '0 4px 14px 0 rgba(67, 206, 162, 0.2)',
-        }}>
-          Entrer
-        </button>
-        {error && <p style={{ color: '#ff6b6b', marginTop: '16px' }}>{error}</p>}
+            fontWeight: 600,
+            cursor: 'pointer',
+            boxShadow: '0 4px 14px 0 rgba(255, 107, 107, 0.2)',
+            marginBottom: '16px',
+          }}>
+            Déconnexion
+          </button>
+        ) : (
+          <>
+            <input
+              type="password"
+              placeholder="Mot de passe"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              style={{
+                padding: '12px',
+                borderRadius: '8px',
+                border: 'none',
+                marginBottom: '16px',
+                width: '100%',
+                fontSize: '1rem',
+              }}
+            />
+            <button type="submit" style={{
+              background: 'linear-gradient(90deg, #43cea2 0%, #185a9d 100%)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '12px 24px',
+              fontSize: '1rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: '0 4px 14px 0 rgba(67, 206, 162, 0.2)',
+            }}>
+              Entrer
+            </button>
+            {error && <p style={{ color: '#ff6b6b', marginTop: '16px' }}>{error}</p>}
+          </>
+        )}
       </form>
     </div>
   );
