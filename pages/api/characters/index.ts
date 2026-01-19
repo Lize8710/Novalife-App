@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const client = await clientPromise;
       const db = client.db();
-      const data = req.body;
+      const data = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
       const now = new Date().toISOString();
       const result = await db.collection('characters').insertOne({ ...data, created_at: now });
       return res.status(201).json({ _id: result.insertedId, ...data, created_at: now });
