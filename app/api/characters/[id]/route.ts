@@ -4,11 +4,11 @@ import { ObjectId } from 'mongodb';
 
 import type { NextRequest } from 'next/server';
 export async function GET(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
-  const { params } = await context;
+  const paramsObj = await context.params;
   try {
     const client = await clientPromise;
     const db = client.db();
-    const character = await db.collection('characters').findOne({ _id: new ObjectId(params.id) });
+    const character = await db.collection('characters').findOne({ _id: new ObjectId(paramsObj.id) });
     if (!character) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     return NextResponse.json(character);
   } catch (error) {
