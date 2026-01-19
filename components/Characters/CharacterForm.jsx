@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
+import { characterMethods } from '@/api/supabaseClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,7 @@ const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 export default function CharacterForm({ character, onSubmit, onCancel, isLoading }) {
   const { data: allCharacters = [] } = useQuery({
     queryKey: ['characters'],
-    queryFn: () => base44.entities.Character.list(),
+    queryFn: () => characterMethods.list(),
   });
 
   const [formData, setFormData] = useState({
