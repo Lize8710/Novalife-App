@@ -14,12 +14,20 @@ const api = {
     return res.json();
   },
   update: async (_id, data) => {
-    const res = await fetch(`/api/characters/${_id}`, { method: 'PUT', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
+    const res = await fetch('/api/characters/update', {
+      method: 'PUT',
+      body: JSON.stringify({ _id, ...data }),
+      headers: { 'Content-Type': 'application/json' }
+    });
     if (!res.ok) throw new Error('Erreur lors de la mise à jour');
     return res.json();
   },
   delete: async (_id) => {
-    const res = await fetch(`/api/characters/${_id}`, { method: 'DELETE' });
+    const res = await fetch('/api/characters/delete', {
+      method: 'DELETE',
+      body: JSON.stringify({ _id }),
+      headers: { 'Content-Type': 'application/json' }
+    });
     if (!res.ok) throw new Error('Erreur lors de la suppression');
     return res.json();
   },
