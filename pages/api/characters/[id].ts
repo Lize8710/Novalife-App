@@ -1,13 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ObjectId } from 'mongodb';
-import { connectToDatabase } from '../../../lib/mongodb';
+import clientPromise from '../../../lib/mongodb';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
   if (!id || typeof id !== 'string') {
     return res.status(400).json({ error: 'ID manquant ou invalide' });
   }
-  const db = await connectToDatabase();
+  const client = await clientPromise;
+  const db = client.db();
   const collection = db.collection('characters');
 
   if (req.method === 'GET') {

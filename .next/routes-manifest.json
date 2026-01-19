@@ -38,22 +38,10 @@
       "namedRegex": "^/(?:/)?$"
     },
     {
-      "page": "/_global-error",
-      "regex": "^/_global\\-error(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/_global\\-error(?:/)?$"
-    },
-    {
       "page": "/_not-found",
       "regex": "^/_not\\-found(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/_not\\-found(?:/)?$"
-    },
-    {
-      "page": "/api/characters",
-      "regex": "^/api/characters(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/api/characters(?:/)?$"
     },
     {
       "page": "/favicon.ico",
