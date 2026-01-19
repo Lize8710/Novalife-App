@@ -26,20 +26,17 @@ interface Character {
 }
 
 export const characterMethods = {
-  list: async (sortBy = 'created_at', page = 1, pageSize = 12) => {
+  list: async (sortBy = 'created_at') => {
     try {
-      const from = (page - 1) * pageSize;
-      const to = from + pageSize - 1;
-      const { data, error, count } = await supabase
+      const { data, error } = await supabase
         .from('characters')
-        .select('*', { count: 'exact' })
-        .order(sortBy, { ascending: false })
-        .range(from, to);
+        .select('*')
+        .order(sortBy, { ascending: false });
       if (error) throw error;
-      return { data: data || [], count: count || 0 };
+      return data || [];
     } catch (error) {
       console.error('Error fetching characters:', error);
-      return { data: [], count: 0 };
+      return [];
     }
   },
   

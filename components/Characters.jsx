@@ -28,8 +28,7 @@ import CharacterForm from '@/components/Characters/CharacterForm';
 import CharacterDetails from '@/components/Characters/CharacterDetails';
 
 export default function Characters() {
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 12;
+  // Suppression de la pagination côté serveur
   const [showForm, setShowForm] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState(null);
   const [viewingCharacter, setViewingCharacter] = useState(null);
@@ -38,12 +37,9 @@ export default function Characters() {
 
   const queryClient = useQueryClient();
 
-  const {
-    data: { data: characters = [], count = 0 } = {},
-    isLoading
-  } = useQuery({
-    queryKey: ['characters', page],
-    queryFn: () => base44.entities.Character.list('created_at', page, PAGE_SIZE),
+  const { data: characters = [], isLoading } = useQuery({
+    queryKey: ['characters'],
+    queryFn: () => base44.entities.Character.list('created_at'),
   });
 
   const getTrustedPersons = (character) => {
@@ -103,7 +99,6 @@ export default function Characters() {
     setEditingCharacter(null);
   };
 
-  // Filtrage côté client sur la page courante
   const filteredCharacters = characters.filter(char => {
     const fullName = `${char.first_name} ${char.last_name}`.toLowerCase();
     const query = searchQuery.toLowerCase();
@@ -112,7 +107,6 @@ export default function Characters() {
       char.blood_type?.toLowerCase().includes(query) ||
       char.phone?.toLowerCase().includes(query);
   });
-  const totalPages = Math.ceil(count / PAGE_SIZE);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -216,23 +210,6 @@ export default function Characters() {
                 ))}
               </AnimatePresence>
             </div>
-            {/* Pagination controls */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-8">
-                <Button
-                  disabled={page === 1}
-                  onClick={() => setPage(page - 1)}
-                  className="px-4 py-2"
-                >Précédent</Button>
-                <span className="text-cyan-100 font-medium">Page {page} / {totalPages}</span>
-                <Button
-                  disabled={page === totalPages}
-                  onClick={() => setPage(page + 1)}
-                  className="px-4 py-2"
-                >Suivant</Button>
-              </div>
-            )}
-          </>
         )}
       </main>
 
