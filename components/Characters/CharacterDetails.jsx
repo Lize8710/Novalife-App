@@ -92,17 +92,9 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
         </div>
       </div>
 
-      {/* Contenu */}
+      {/* Contenu sans doublon */}
       <div className="pt-6 px-6 pb-6 relative z-10">
-        <div className="flex items-start justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-cyan-100">
-              {character.first_name} {character.last_name}
-            </h2>
-            {character.profession && (
-              <p className="text-slate-400 mt-1">{character.profession}</p>
-            )}
-          </div>
+        <div className="flex items-start justify-end">
           {character.blood_type && (
             <Badge className={`${bloodTypeColors[character.blood_type]} text-sm font-semibold px-3 py-1.5 shadow-lg`}>
               <Droplets className="w-3.5 h-3.5 mr-1.5" />
