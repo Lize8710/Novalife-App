@@ -50,9 +50,13 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
     >
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none" />
       
-      {/* Header avec avatar */}
-      <div className="relative h-32 bg-gradient-to-br from-cyan-600 via-purple-600 to-pink-600">
+      {/* Header avec logo et gif en fond */}
+      <div className="relative h-32 bg-gradient-to-br from-cyan-600 via-purple-600 to-pink-600 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
+        {/* Logo Atelis en fond */}
+        <img src="/Atelis.png" alt="Logo Atelis" style={{position:'absolute', left:0, right:0, top:0, margin:'auto', width:'220px', opacity:0.12, objectFit:'contain', zIndex:1}} />
+        {/* Gif en fond */}
+        <img src="/logo gif.gif" alt="Gif Atelis" style={{position:'absolute', right:'20px', top:'10px', width:'80px', opacity:0.18, zIndex:2}} />
         <Button 
           variant="ghost" 
           size="icon" 
@@ -61,7 +65,6 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
         >
           <X className="w-5 h-5" />
         </Button>
-        
         <div className="absolute -bottom-12 left-6 z-10">
           {character.avatar_url ? (
             (() => {
