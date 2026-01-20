@@ -23,6 +23,7 @@ Thumbs.db
 dist/
 build/
 out/
+.next/
 
 # Logs
 *.log
@@ -31,5 +32,3 @@ npm-debug.log*
 # Temporary files
 .tmp/
 temp/
-
-.next/
