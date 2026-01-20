@@ -51,7 +51,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none" />
       
       {/* Header compact avec photo et nom */}
-      <div className="relative flex items-end h-40 overflow-hidden">
+      <div className="relative flex items-end h-28 overflow-hidden">
         <img src="/logo gif.gif" alt="Fond gif" className="absolute inset-0 w-full h-full object-cover opacity-80" style={{zIndex:1}} />
         <Button 
           variant="ghost" 
@@ -61,7 +61,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
         >
           <X className="w-5 h-5" />
         </Button>
-        <div className="flex items-center gap-4 px-6 pb-2 relative z-10" style={{marginTop:'2.5rem'}}>
+        <div className="flex items-center gap-4 px-6 pb-2 relative z-10" style={{marginTop:'3.5rem'}}>
           {character.avatar_url ? (
             (() => {
               let src = character.avatar_url;
