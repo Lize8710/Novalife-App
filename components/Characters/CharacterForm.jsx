@@ -45,6 +45,7 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
   });
 
   const [avatarPreview, setAvatarPreview] = useState('');
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   useEffect(() => {
     if (character) {
@@ -95,6 +96,10 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (avatarUploading) {
+      alert("Merci de patienter, l'upload de la photo est en cours.");
+      return;
+    }
     onSubmit(formData);
   };
 
@@ -109,12 +114,15 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
   const handleAvatarUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      setAvatarUploading(true);
       setAvatarPreview(URL.createObjectURL(file));
       try {
         const { fileUrl } = await uploadAvatarToGridFS(file);
         setFormData(prev => ({ ...prev, avatar_url: fileUrl }));
       } catch (err) {
-        alert('Erreur lors de l\'upload de la photo');
+        alert("Erreur lors de l'upload de la photo");
+      } finally {
+        setAvatarUploading(false);
       }
     }
   };
@@ -352,11 +360,11 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
           </Button>
           <Button 
             type="submit" 
-            disabled={isLoading}
+            disabled={isLoading || avatarUploading || (avatarPreview && !formData.avatar_url)}
             className="flex-1 h-11 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all"
           >
             <Save className="w-4 h-4 mr-2" />
-            {isLoading ? 'Enregistrement...' : (character ? 'Mettre à jour' : 'Créer')}
+            {avatarUploading ? 'Upload photo...' : isLoading ? 'Enregistrement...' : (character ? 'Mettre à jour' : 'Créer')}
           </Button>
         </div>
       </form>
