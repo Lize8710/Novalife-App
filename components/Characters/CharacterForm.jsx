@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { uploadAvatarToGridFS } from '../../lib/uploadAvatar';
 import { motion, AnimatePresence } from 'framer-motion';
 // Utilisation de l'API route pour récupérer les personnages
 const api = {
@@ -104,16 +105,17 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
     }
   };
 
-  // Gestion de l'upload local
-  const handleAvatarUpload = (e) => {
+  // Upload image sur GridFS
+  const handleAvatarUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, avatar_url: reader.result }));
-        setAvatarPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setAvatarPreview(URL.createObjectURL(file));
+      try {
+        const { fileUrl } = await uploadAvatarToGridFS(file);
+        setFormData(prev => ({ ...prev, avatar_url: fileUrl }));
+      } catch (err) {
+        alert('Erreur lors de l\'upload de la photo');
+      }
     }
   };
 
