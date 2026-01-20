@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { compressImage } from '../../lib/compressImage';
 import { uploadAvatarToGridFS } from '../../lib/uploadAvatar';
 import { motion, AnimatePresence } from 'framer-motion';
 // Utilisation de l'API route pour récupérer les personnages
@@ -111,18 +112,16 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
   };
 
   // Upload image sur GridFS
+  // Compression avant stockage base64
   const handleAvatarUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setAvatarUploading(true);
-      setAvatarPreview(URL.createObjectURL(file));
       try {
-        const { fileUrl } = await uploadAvatarToGridFS(file);
-        setFormData(prev => ({ ...prev, avatar_url: fileUrl }));
+        const compressedBase64 = await compressImage(file, 300, 300, 0.7);
+        setFormData(prev => ({ ...prev, avatar_url: compressedBase64 }));
+        setAvatarPreview(compressedBase64);
       } catch (err) {
-        alert("Erreur lors de l'upload de la photo");
-      } finally {
-        setAvatarUploading(false);
+        alert("Erreur lors de la compression de l'image");
       }
     }
   };
@@ -360,11 +359,11 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
           </Button>
           <Button 
             type="submit" 
-            disabled={isLoading || avatarUploading || (avatarUploading && !formData.avatar_url)}
+            disabled={isLoading}
             className="flex-1 h-11 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all"
           >
             <Save className="w-4 h-4 mr-2" />
-            {avatarUploading ? 'Upload photo...' : isLoading ? 'Enregistrement...' : (character ? 'Mettre à jour' : 'Créer')}
+            {isLoading ? 'Enregistrement...' : (character ? 'Mettre à jour' : 'Créer')}
           </Button>
         </div>
       </form>
