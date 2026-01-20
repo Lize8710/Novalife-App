@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'GET') {
     try {
       const client = await clientPromise;
-      const db = client.db();
+      const db = client.db('Novalife');
       const characters = await db.collection('characters').find({}).toArray();
       return res.status(200).json(characters);
     } catch (err) {
@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else if (req.method === 'POST') {
     try {
       const client = await clientPromise;
-      const db = client.db();
+      const db = client.db('Novalife');
       const data = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
       const now = new Date().toISOString();
       const result = await db.collection('characters').insertOne({ ...data, created_at: now });

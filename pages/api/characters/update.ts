@@ -28,6 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (result.matchedCount === 0) return res.status(404).json({ error: 'Not found' });
     return res.status(200).json({ success: true });
   } catch (err) {
-    return res.status(500).json({ error: 'Erreur serveur', details: err });
+    console.error('Erreur dans /api/characters/update:', err);
+    return res.status(500).json({ error: 'Erreur serveur', details: err instanceof Error ? err.message : err });
   }
 }
