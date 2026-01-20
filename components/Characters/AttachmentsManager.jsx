@@ -20,18 +20,29 @@ export default function AttachmentsManager({ attachments = [], onChange }) {
 
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/characters/upload-attachment', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!res.ok) throw new Error('Erreur upload');
+      const data = await res.json();
+      const fileUrl = data.fileUrl || data.file_url;
+      if (!fileUrl) {
+        alert('Erreur : le serveur n’a pas retourné d’URL pour la pièce jointe.');
+        return;
+      }
       const newAttachment = {
         type,
         name: file.name,
-        url: file_url,
+        url: fileUrl,
         added_date: new Date().toISOString()
       };
-
       onChange([...attachments, newAttachment]);
       setIsAdding(false);
     } catch (error) {
+      alert('Erreur lors de l’upload du fichier.');
       console.error('Upload error:', error);
     } finally {
       setUploading(false);
@@ -76,76 +87,54 @@ export default function AttachmentsManager({ attachments = [], onChange }) {
 
   return (
     <div className="space-y-3">
-      {/* Liste des pièces jointes */}
-      {safeAttachments.length > 0 && (
-        <div className="space-y-2">
-          {safeAttachments.map((attachment, index) => (
-            <div
-              key={index}
-              className={`flex items-center gap-3 p-3 rounded-lg border ${getColor(attachment.type)}`}
-            >
-              <div className="flex-shrink-0">
-                {getIcon(attachment.type)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-200 truncate">{attachment.name}</p>
-              </div>
-              <a
-                href={attachment.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-shrink-0 text-slate-400 hover:text-slate-200"
+      <div className="space-y-3">
+        {/* Liste des liens */}
+        {safeAttachments.length > 0 && (
+          <div className="space-y-2">
+            {safeAttachments.map((attachment, index) => (
+              <div
+                key={index}
+                className={`flex items-center gap-3 p-3 rounded-lg border ${getColor('link')}`}
               >
-                <ExternalLink className="w-4 h-4" />
-              </a>
-              <button
-                onClick={() => handleRemove(index)}
-                className="flex-shrink-0 text-slate-400 hover:text-red-400"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Formulaire d'ajout */}
-      {isAdding ? (
-        <div className="p-4 bg-slate-800/50 rounded-lg border border-cyan-500/30 space-y-3">
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant={addType === 'document' ? 'default' : 'outline'}
-              onClick={() => setAddType('document')}
-              className="flex-1"
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Document
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant={addType === 'image' ? 'default' : 'outline'}
-              onClick={() => setAddType('image')}
-              className="flex-1"
-            >
-              <ImageIcon className="w-4 h-4 mr-2" />
-              Image
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant={addType === 'link' ? 'default' : 'outline'}
-              onClick={() => setAddType('link')}
-              className="flex-1"
-            >
-              <LinkIcon className="w-4 h-4 mr-2" />
-              Lien
-            </Button>
+                <div className="flex-shrink-0">
+                  <LinkIcon className="w-4 h-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-slate-200 truncate">{attachment.name}</p>
+                </div>
+                <a
+                  href={attachment.url && (typeof attachment.url === 'string') && (attachment.url.startsWith('/') || attachment.url.startsWith('http')) ? attachment.url : '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-shrink-0 text-slate-400 hover:text-slate-200"
+                  onClick={e => {
+                    if (!attachment.url || attachment.url === '#' || typeof attachment.url !== 'string' ||
+                      !(attachment.url.startsWith('/') || attachment.url.startsWith('http'))
+                    ) {
+                      e.preventDefault();
+                    }
+                    e.stopPropagation();
+                  }}
+                  tabIndex={0}
+                  role="link"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => handleRemove(index)}
+                  className="flex-shrink-0 text-slate-400 hover:text-red-400"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
           </div>
+        )}
 
-          {addType === 'link' ? (
+        {/* Formulaire d'ajout de lien uniquement */}
+        {isAdding ? (
+          <div className="p-4 bg-slate-800/50 rounded-lg border border-cyan-500/30 space-y-3">
             <div className="space-y-2">
               <div>
                 <Label htmlFor="link_name" className="text-slate-300">Nom du lien</Label>
@@ -192,49 +181,19 @@ export default function AttachmentsManager({ attachments = [], onChange }) {
                 </Button>
               </div>
             </div>
-          ) : (
-            <div className="space-y-2">
-              <Label className="text-slate-300">
-                {uploading ? 'Upload en cours...' : `Sélectionner ${addType === 'image' ? 'une image' : 'un document'}`}
-              </Label>
-              <div className="flex gap-2">
-                <Input
-                  type="file"
-                  accept={addType === 'image' ? 'image/*' : '*'}
-                  onChange={(e) => handleFileUpload(e, addType)}
-                  disabled={uploading}
-                  className="bg-slate-800/50 border-cyan-500/30 text-cyan-100"
-                />
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setIsAdding(false)}
-                  disabled={uploading}
-                >
-                  Annuler
-                </Button>
-              </div>
-              {uploading && (
-                <div className="flex items-center gap-2 text-sm text-cyan-400">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Upload en cours...
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      ) : (
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => setIsAdding(true)}
-          className="w-full border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
-        >
-          <Upload className="w-4 h-4 mr-2" />
-          Ajouter un fichier ou un lien
-        </Button>
-      )}
+          </div>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setIsAdding(true)}
+            className="w-full border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Ajouter un lien
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

@@ -81,19 +81,42 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
                 <span className="text-3xl font-bold text-cyan-400">{initials}</span>
               </div>
             )}
+            {/* Modal zoom photo : n'apparaît que si showModal est true */}
+            {showModal ? (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80" onClick={() => setShowModal(false)}>
+                <img
+                  src={character.avatar_url && character.avatar_url.length > 100 && !character.avatar_url.startsWith('data:image') && !character.avatar_url.startsWith('http') && !character.avatar_url.startsWith('/api')
+                    ? `data:image/png;base64,${character.avatar_url}`
+                    : character.avatar_url}
+                  alt="Agrandissement photo"
+                  className="max-w-full max-h-[90vh] rounded-2xl border-4 border-cyan-400 shadow-2xl"
+                  style={{background:'#0f172a'}}
+                  onClick={e => e.stopPropagation()}
+                />
+                <button
+                  className="absolute top-8 right-8 text-white text-3xl bg-black/50 rounded-full p-2 hover:bg-black/80 z-50"
+                  onClick={() => setShowModal(false)}
+                  title="Fermer"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            ) : null}
           </div>
           {/* (Nom, prénom, métier supprimés du header comme demandé) */}
           {/* (Groupe sanguin retiré du header comme demandé) */}
           <div className="flex-1"></div>
-          {/* Bouton fermeture en overlay */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onClose}
-            className="absolute top-4 right-4 text-white/80 hover:text-white hover:bg-white/20 z-20"
-          >
-            <X className="w-5 h-5" />
-          </Button>
+          {/* Bouton fermeture en overlay (unique, non rendu si modale zoom ouverte) */}
+          {showModal ? null : (
+            <Button 
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="absolute top-4 right-4 text-white/80 hover:text-white hover:bg-white/20 z-20"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          )}
         </div>
       </div>
 
@@ -190,10 +213,23 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
                 return (
                   <a
                     key={index}
-                    href={attachment.url}
+                    href={
+                      attachment.url && typeof attachment.url === 'string' &&
+                      (attachment.url.startsWith('/') || attachment.url.startsWith('http'))
+                        ? attachment.url
+                        : '#'
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 p-2 rounded-lg bg-slate-800/50 hover:bg-slate-800 border border-amber-500/20 hover:border-amber-500/40 transition-all group"
+                    onClick={e => {
+                      if (!attachment.url || attachment.url === '#' || typeof attachment.url !== 'string' ||
+                        !(attachment.url.startsWith('/') || attachment.url.startsWith('http'))
+                      ) {
+                        e.preventDefault();
+                      }
+                      e.stopPropagation();
+                    }}
                   >
                     <div className="text-amber-400">
                       {getIcon()}
