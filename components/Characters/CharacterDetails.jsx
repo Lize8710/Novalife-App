@@ -83,17 +83,31 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
               <span className="text-2xl font-bold text-cyan-400">{initials}</span>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Contenu principal avec nom, profession, date à côté de la photo */}
+      <div className="pt-6 px-6 pb-6 relative z-10">
+        <div className="flex items-start gap-4">
+          <div style={{width:'5rem'}} />
           <div>
-            <h2 className="text-2xl font-semibold text-cyan-100 mb-1">{character.first_name} {character.last_name}</h2>
+            <h2 className="text-2xl font-bold text-cyan-100 mb-1">{character.first_name} {character.last_name}</h2>
+            {character.profession && (
+              <p className="text-slate-400 mt-1">{character.profession}</p>
+            )}
             {character.birth_date && (
               <div className="text-sm text-slate-300">{format(new Date(character.birth_date), 'dd/MM/yyyy', { locale: fr })}</div>
             )}
           </div>
+          <div className="flex-1 flex justify-end">
+            {character.blood_type && (
+              <Badge className={`${bloodTypeColors[character.blood_type]} text-sm font-semibold px-3 py-1.5 shadow-lg`}>
+                <Droplets className="w-3.5 h-3.5 mr-1.5" />
+                {character.blood_type}
+              </Badge>
+            )}
+          </div>
         </div>
-      </div>
-
-      {/* Contenu sans doublon */}
-      <div className="pt-6 px-6 pb-6 relative z-10">
         <div className="flex items-start justify-end">
           {character.blood_type && (
             <Badge className={`${bloodTypeColors[character.blood_type]} text-sm font-semibold px-3 py-1.5 shadow-lg`}>
