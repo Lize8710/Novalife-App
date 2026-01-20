@@ -67,27 +67,6 @@ export default function TrustedPersonsManager({ trustedPersons = [], onChange, a
           Ajouter une personne de confiance
         </Button>
       )}
-            <Label htmlFor="manual_name" className="text-slate-300">Nom complet</Label>
-            <Input
-              id="manual_name"
-              value={manualName}
-              onChange={(e) => setManualName(e.target.value)}
-              placeholder="Jean Dupont"
-              className="bg-slate-800/50 border-indigo-500/30 text-cyan-100"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="manual_phone" className="text-slate-300">Téléphone</Label>
-            <Input
-              id="manual_phone"
-              type="tel"
-              value={manualPhone}
-              onChange={(e) => setManualPhone(e.target.value)}
-              placeholder="+33 6 12 34 56 78"
-              className="bg-slate-800/50 border-indigo-500/30 text-cyan-100"
-            />
-          </div>
 
           <div className="space-y-2">
             <Label htmlFor="manual_name" className="text-slate-300">Nom complet</Label>
