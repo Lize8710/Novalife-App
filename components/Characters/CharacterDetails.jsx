@@ -52,9 +52,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
       
       {/* Header compact avec photo et nom */}
       <div className="relative flex items-end h-32 overflow-hidden">
-        {/* Gif en fond, couvre toute la zone */}
         <img src="/logo gif.gif" alt="Fond gif" className="absolute inset-0 w-full h-full object-cover opacity-80" style={{zIndex:1}} />
-        {/* Une seule croix en haut à droite */}
         <Button 
           variant="ghost" 
           size="icon" 
@@ -63,7 +61,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
         >
           <X className="w-5 h-5" />
         </Button>
-        <div className="flex items-end gap-4 px-6 pb-2">
+        <div className="flex items-end gap-4 px-6 pb-2 relative z-10">
           {character.avatar_url ? (
             (() => {
               let src = character.avatar_url;
@@ -73,7 +71,8 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
               return <img 
                 src={src} 
                 alt={`${character.first_name} ${character.last_name}`}
-                className="w-20 h-20 rounded-2xl object-cover ring-4 ring-cyan-500/50 shadow-lg shadow-cyan-500/50 cursor-pointer"
+                className="w-20 h-20 rounded-2xl object-cover ring-4 ring-cyan-500/50 shadow-lg shadow-cyan-500/50 cursor-pointer bg-slate-900"
+                style={{opacity:1}}
                 onClick={() => setShowModal(true)}
                 title="Agrandir la photo"
               />;
@@ -83,15 +82,8 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
               <span className="text-2xl font-bold text-cyan-400">{initials}</span>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Contenu principal avec nom, profession, date à côté de la photo */}
-      <div className="pt-6 px-6 pb-6 relative z-10">
-        <div className="flex items-start gap-4">
-          <div style={{width:'5rem'}} />
           <div>
-            <h2 className="text-2xl font-bold text-cyan-100 mb-1">{character.first_name} {character.last_name}</h2>
+            <h2 className="text-2xl font-semibold text-cyan-100 mb-1">{character.first_name} {character.last_name}</h2>
             {character.profession && (
               <p className="text-slate-400 mt-1">{character.profession}</p>
             )}
@@ -108,6 +100,10 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
             )}
           </div>
         </div>
+      </div>
+
+      {/* Contenu principal sans doublon du groupe sanguin */}
+      <div className="pt-6 px-6 pb-6 relative z-10">
         <div className="flex items-start justify-end">
           {character.blood_type && (
             <Badge className={`${bloodTypeColors[character.blood_type]} text-sm font-semibold px-3 py-1.5 shadow-lg`}>
