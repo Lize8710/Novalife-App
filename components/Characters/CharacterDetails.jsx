@@ -53,10 +53,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
       {/* Header avec logo et gif en fond */}
       <div className="relative h-32 bg-gradient-to-br from-cyan-600 via-purple-600 to-pink-600 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
-        {/* Logo Atelis en fond */}
-        <img src="/Atelis.png" alt="Logo Atelis" style={{position:'absolute', left:0, right:0, top:0, margin:'auto', width:'220px', opacity:0.12, objectFit:'contain', zIndex:1}} />
-        {/* Gif en fond */}
-        <img src="/logo gif.gif" alt="Gif Atelis" style={{position:'absolute', right:'20px', top:'10px', width:'80px', opacity:0.18, zIndex:2}} />
+        {/* ...rien, retour à l'origine... */}
         <Button 
           variant="ghost" 
           size="icon" 
