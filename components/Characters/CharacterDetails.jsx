@@ -51,7 +51,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none" />
       
       {/* Header compact avec photo et nom */}
-      <div className="relative flex items-end h-32 overflow-hidden">
+      <div className="relative flex items-end h-40 overflow-hidden">
         <img src="/logo gif.gif" alt="Fond gif" className="absolute inset-0 w-full h-full object-cover opacity-80" style={{zIndex:1}} />
         <Button 
           variant="ghost" 
@@ -61,7 +61,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
         >
           <X className="w-5 h-5" />
         </Button>
-        <div className="flex items-end gap-4 px-6 pb-2 relative z-10">
+        <div className="flex items-center gap-4 px-6 pb-2 relative z-10" style={{marginTop:'2.5rem'}}>
           {character.avatar_url ? (
             (() => {
               let src = character.avatar_url;
@@ -89,14 +89,6 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
             )}
             {character.birth_date && (
               <div className="text-sm text-slate-300">{format(new Date(character.birth_date), 'dd/MM/yyyy', { locale: fr })}</div>
-            )}
-          </div>
-          <div className="flex-1 flex justify-end">
-            {character.blood_type && (
-              <Badge className={`${bloodTypeColors[character.blood_type]} text-sm font-semibold px-3 py-1.5 shadow-lg`}>
-                <Droplets className="w-3.5 h-3.5 mr-1.5" />
-                {character.blood_type}
-              </Badge>
             )}
           </div>
         </div>
