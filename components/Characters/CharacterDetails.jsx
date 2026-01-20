@@ -50,55 +50,50 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
     >
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none" />
       
-      {/* Header avec logo et gif en fond */}
-      <div className="relative h-32 bg-gradient-to-br from-cyan-600 via-purple-600 to-pink-600 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
-        {/* ...rien, retour à l'origine... */}
+      {/* Header compact avec photo et nom */}
+      <div className="relative flex items-end h-32 overflow-hidden">
+        {/* Gif en fond, couvre toute la zone */}
+        <img src="/logo gif.gif" alt="Fond gif" className="absolute inset-0 w-full h-full object-cover opacity-80" style={{zIndex:1}} />
+        {/* Une seule croix en haut à droite */}
         <Button 
           variant="ghost" 
           size="icon" 
           onClick={onClose}
-          className="absolute top-4 right-4 text-white/80 hover:text-white hover:bg-white/20 z-10"
+          className="absolute top-4 right-4 text-white/80 hover:text-white hover:bg-white/20 z-20"
         >
           <X className="w-5 h-5" />
         </Button>
-        <div className="absolute -bottom-12 left-6 z-10">
+        <div className="flex items-end gap-4 px-6 pb-2">
           {character.avatar_url ? (
             (() => {
               let src = character.avatar_url;
-              // Si c'est du base64 sans préfixe, ajoute le préfixe
               if (src && src.length > 100 && !src.startsWith('data:image') && !src.startsWith('http') && !src.startsWith('/api')) {
                 src = `data:image/png;base64,${src}`;
               }
-              return <>
-                <img 
-                  src={src} 
-                  alt={`${character.first_name} ${character.last_name}`}
-                  className="w-24 h-24 rounded-2xl object-cover ring-4 ring-cyan-500/50 shadow-lg shadow-cyan-500/50 cursor-pointer"
-                  onClick={() => setShowModal(true)}
-                  title="Agrandir la photo"
-                />
-                {showModal && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setShowModal(false)}>
-                    <img
-                      src={src}
-                      alt="Agrandissement avatar"
-                      className="max-w-full max-h-[80vh] rounded-2xl shadow-2xl border-4 border-cyan-500"
-                    />
-                  </div>
-                )}
-              </>;
+              return <img 
+                src={src} 
+                alt={`${character.first_name} ${character.last_name}`}
+                className="w-20 h-20 rounded-2xl object-cover ring-4 ring-cyan-500/50 shadow-lg shadow-cyan-500/50 cursor-pointer"
+                onClick={() => setShowModal(true)}
+                title="Agrandir la photo"
+              />;
             })()
           ) : (
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center ring-4 ring-cyan-500/50 shadow-lg shadow-cyan-500/50 backdrop-blur-sm">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center ring-4 ring-cyan-500/50 shadow-lg shadow-cyan-500/50 backdrop-blur-sm">
               <span className="text-2xl font-bold text-cyan-400">{initials}</span>
             </div>
           )}
+          <div>
+            <h2 className="text-2xl font-semibold text-cyan-100 mb-1">{character.first_name} {character.last_name}</h2>
+            {character.birth_date && (
+              <div className="text-sm text-slate-300">{format(new Date(character.birth_date), 'dd/MM/yyyy', { locale: fr })}</div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Contenu */}
-      <div className="pt-16 px-6 pb-6 relative z-10">
+      <div className="pt-6 px-6 pb-6 relative z-10">
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-2xl font-bold text-cyan-100">
