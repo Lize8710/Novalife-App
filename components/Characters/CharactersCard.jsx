@@ -43,11 +43,17 @@ export default function CharacterCard({ character, onView, onEdit, onDelete, tru
         <div className="p-6 relative z-10">
           <div className="flex items-start gap-4">
             {character.avatar_url ? (
-              <img 
-                src={character.avatar_url} 
-                alt={`${character.first_name} ${character.last_name}`}
-                className="w-16 h-16 rounded-2xl object-cover ring-2 ring-cyan-500/50 shadow-lg shadow-cyan-500/50"
-              />
+              (() => {
+                let src = character.avatar_url;
+                if (src && src.length > 100 && !src.startsWith('data:image') && !src.startsWith('http') && !src.startsWith('/api')) {
+                  src = `data:image/png;base64,${src}`;
+                }
+                return <img 
+                  src={src} 
+                  alt={`${character.first_name} ${character.last_name}`}
+                  className="w-16 h-16 rounded-2xl object-cover ring-2 ring-cyan-500/50 shadow-lg shadow-cyan-500/50"
+                />;
+              })()
             ) : (
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center ring-2 ring-cyan-500/50 shadow-lg shadow-cyan-500/50 backdrop-blur-sm">
                 <span className="text-lg font-semibold text-cyan-400">{initials}</span>
