@@ -51,9 +51,9 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none" />
       
       {/* Header compact avec photo et nom, style "fiche annotée" */}
-      <div className="relative w-full" style={{minHeight:'4.5rem'}}>
-        {/* Bande GIF très fine */}
-        <div className="absolute top-0 left-0 w-full h-16 overflow-hidden z-0">
+      <div className="relative w-full" style={{minHeight:'3.5rem'}}>
+        {/* Bande GIF ultra fine */}
+        <div className="absolute top-0 left-0 w-full h-12 overflow-hidden z-0">
           <img src="/logo gif.gif" alt="Fond gif" className="w-full h-full object-cover opacity-80" style={{zIndex:1}} />
         </div>
         {/* Bouton fermeture */}
@@ -61,14 +61,14 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
           variant="ghost" 
           size="icon" 
           onClick={onClose}
-          className="absolute top-3 right-4 text-white/80 hover:text-white hover:bg-white/20 z-20"
+          className="absolute top-2 right-4 text-white/80 hover:text-white hover:bg-white/20 z-20"
         >
           <X className="w-5 h-5" />
         </Button>
         {/* Bloc photo + infos */}
-        <div className="flex items-center gap-4 px-6 relative z-10" style={{marginTop:'2.5rem'}}>
-          {/* Photo à cheval sur le GIF et le fond bleu */}
-          <div style={{position:'relative', top:'-2.5rem'}}>
+        <div className="flex items-center gap-4 px-6 relative z-10" style={{marginTop:'5rem'}}>
+          {/* Photo à cheval sur le GIF et le fond bleu, bien remontée */}
+          <div style={{position:'relative', top:'-4.5rem'}}>
             {character.avatar_url ? (
               (() => {
                 let src = character.avatar_url;
@@ -79,7 +79,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
                   src={src} 
                   alt={`${character.first_name} ${character.last_name}`}
                   className="w-24 h-24 rounded-2xl object-cover ring-4 ring-cyan-400/80 shadow-xl shadow-cyan-500/40 cursor-pointer bg-slate-900 border-4 border-slate-900"
-                  style={{opacity:1, background:'#0f172a'}} // fond bleu foncé
+                  style={{opacity:1, background:'#0f172a'}}
                   onClick={() => setShowModal(true)}
                   title="Agrandir la photo"
                 />;
