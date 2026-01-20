@@ -64,24 +64,31 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
         
         <div className="absolute -bottom-12 left-6 z-10">
           {character.avatar_url ? (
-            <>
-              <img 
-                src={character.avatar_url} 
-                alt={`${character.first_name} ${character.last_name}`}
-                className="w-24 h-24 rounded-2xl object-cover ring-4 ring-cyan-500/50 shadow-lg shadow-cyan-500/50 cursor-pointer"
-                onClick={() => setShowModal(true)}
-                title="Agrandir la photo"
-              />
-              {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setShowModal(false)}>
-                  <img
-                    src={character.avatar_url}
-                    alt="Agrandissement avatar"
-                    className="max-w-full max-h-[80vh] rounded-2xl shadow-2xl border-4 border-cyan-500"
-                  />
-                </div>
-              )}
-            </>
+            (() => {
+              let src = character.avatar_url;
+              // Si c'est du base64 sans préfixe, ajoute le préfixe
+              if (src && src.length > 100 && !src.startsWith('data:image') && !src.startsWith('http') && !src.startsWith('/api')) {
+                src = `data:image/png;base64,${src}`;
+              }
+              return <>
+                <img 
+                  src={src} 
+                  alt={`${character.first_name} ${character.last_name}`}
+                  className="w-24 h-24 rounded-2xl object-cover ring-4 ring-cyan-500/50 shadow-lg shadow-cyan-500/50 cursor-pointer"
+                  onClick={() => setShowModal(true)}
+                  title="Agrandir la photo"
+                />
+                {showModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setShowModal(false)}>
+                    <img
+                      src={src}
+                      alt="Agrandissement avatar"
+                      className="max-w-full max-h-[80vh] rounded-2xl shadow-2xl border-4 border-cyan-500"
+                    />
+                  </div>
+                )}
+              </>;
+            })()
           ) : (
             <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center ring-4 ring-cyan-500/50 shadow-lg shadow-cyan-500/50 backdrop-blur-sm">
               <span className="text-2xl font-bold text-cyan-400">{initials}</span>

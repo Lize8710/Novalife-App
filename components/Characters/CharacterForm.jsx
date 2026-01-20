@@ -360,7 +360,7 @@ export default function CharacterForm({ character, onSubmit, onCancel, isLoading
           </Button>
           <Button 
             type="submit" 
-            disabled={isLoading || avatarUploading || (avatarPreview && !formData.avatar_url)}
+            disabled={isLoading || avatarUploading || (avatarUploading && !formData.avatar_url)}
             className="flex-1 h-11 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all"
           >
             <Save className="w-4 h-4 mr-2" />
