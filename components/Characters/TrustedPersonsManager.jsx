@@ -65,40 +65,31 @@ export default function TrustedPersonsManager({ trustedPersons = [], onChange, a
         </div>
       )}
 
+
       {isAdding ? (
         <div className="p-4 bg-slate-800/50 rounded-lg border border-indigo-500/30 space-y-3">
+          {/* Suppression du choix patient existant, saisie manuelle uniquement */}
           <div className="space-y-2">
-            <Label htmlFor="trusted_patient_id" className="text-slate-300">Patient existant</Label>
-            <select 
-              id="trusted_patient_id"
-              value={patientId}
-              onChange={(e) => {
-                setPatientId(e.target.value);
-                if (e.target.value) {
-                  setManualName('');
-                  setManualPhone('');
-                }
-              }}
-              className="h-11 w-full rounded-md bg-slate-800/50 border border-indigo-500/30 text-cyan-100 px-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"
-            >
-              <option value="">Aucun</option>
-              {allCharacters
-                .filter(c => c.id !== currentCharacterId)
-                .map(c => (
-                  <option key={c.id} value={c.id}>
-                    {c.first_name} {c.last_name} {c.phone ? `- ${c.phone}` : ''}
-                  </option>
-                ))}
-            </select>
+            <Label htmlFor="manual_name" className="text-slate-300">Nom complet</Label>
+            <Input
+              id="manual_name"
+              value={manualName}
+              onChange={(e) => setManualName(e.target.value)}
+              placeholder="Jean Dupont"
+              className="bg-slate-800/50 border-indigo-500/30 text-cyan-100"
+            />
           </div>
 
-          <div className="relative py-2">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-indigo-500/20"></div>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-slate-800 px-2 text-slate-500">ou saisie manuelle</span>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="manual_phone" className="text-slate-300">Téléphone</Label>
+            <Input
+              id="manual_phone"
+              type="tel"
+              value={manualPhone}
+              onChange={(e) => setManualPhone(e.target.value)}
+              placeholder="+33 6 12 34 56 78"
+              className="bg-slate-800/50 border-indigo-500/30 text-cyan-100"
+            />
           </div>
 
           <div className="space-y-2">
