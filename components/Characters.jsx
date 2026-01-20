@@ -54,10 +54,16 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Plus, Search, Loader2, Users } from 'lucide-react';
 
+import CalendarButton from './CalendarButton';
+import ProjectNavButton from './ProjectNavButton';
+import BillingNavButton from './BillingNavButton';
+
 
 import CharacterCard from '@/components/Characters/CharactersCard';
 import CharacterForm from '@/components/Characters/CharacterForm';
 import CharacterDetails from '@/components/Characters/CharacterDetails';
+
+
 
 export default function Characters() {
   // Suppression de la pagination côté serveur
@@ -167,12 +173,19 @@ export default function Characters() {
                 alt="Atelis"
                 className="h-10 w-auto"
               />
-              <div>
-                <h1 className="text-xl font-bold text-cyan-100">Patients</h1>
-                <p className="text-xs text-cyan-400/70">{characters.length} patient{characters.length > 1 ? 's' : ''}</p>
+              <div className="flex items-center gap-4">
+                <div>
+                  <h1 className="text-xl font-bold text-cyan-100">Patients</h1>
+                  <p className="text-xs text-cyan-400/70">{characters.length} patient{characters.length > 1 ? 's' : ''}</p>
+                </div>
+                {/* Calendar Icon Button */}
+                <CalendarButton />
+                {/* Project Icon Button */}
+                <ProjectNavButton />
+                {/* Billing Icon Button */}
+                <BillingNavButton />
               </div>
             </div>
-
             <Button 
               onClick={() => setShowForm(true)}
               className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all"
