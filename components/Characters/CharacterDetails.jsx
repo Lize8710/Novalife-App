@@ -51,58 +51,61 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none" />
       
       {/* Header compact avec photo et nom, style "fiche annotée" */}
-      {/* Bande GIF fine en haut, sans impacter le header */}
-      <div className="w-full h-14 overflow-hidden relative">
-        <img src="/logo gif.gif" alt="Fond gif" className="w-full h-full object-cover opacity-80" />
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={onClose}
-          className="absolute top-2 right-4 text-white/80 hover:text-white hover:bg-white/20 z-20"
-        >
-          <X className="w-5 h-5" />
-        </Button>
-      </div>
-      {/* Header principal bleu foncé, flex-row, photo à gauche, infos à droite */}
-      <div className="flex flex-row items-end gap-6 px-6 pt-0 pb-4 bg-transparent relative z-10" style={{marginTop:'-2.5rem'}}>
-        {/* Photo à cheval sur la bande GIF et le fond bleu foncé */}
-        <div style={{position:'relative', top:'-2.5rem'}}>
-          {character.avatar_url ? (
-            (() => {
-              let src = character.avatar_url;
-              if (src && src.length > 100 && !src.startsWith('data:image') && !src.startsWith('http') && !src.startsWith('/api')) {
-                src = `data:image/png;base64,${src}`;
-              }
-              return <img 
-                src={src} 
-                alt={`${character.first_name} ${character.last_name}`}
-                className="w-24 h-24 rounded-2xl object-cover ring-4 ring-cyan-400/80 shadow-xl shadow-cyan-500/40 cursor-pointer bg-slate-900 border-4 border-slate-900"
-                style={{opacity:1, background:'#0f172a'}}
-                onClick={() => setShowModal(true)}
-                title="Agrandir la photo"
-              />;
-            })()
-          ) : (
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center ring-4 ring-cyan-400/80 shadow-xl shadow-cyan-500/40 border-4 border-slate-900 backdrop-blur-sm" style={{background:'#0f172a'}}>
-              <span className="text-3xl font-bold text-cyan-400">{initials}</span>
-            </div>
-          )}
+      {/* Header avec bande gif en fond, photo à cheval, infos à gauche, sang à droite, comme la capture */}
+      <div className="relative w-full" style={{minHeight:'6.5rem'}}>
+        {/* Bande gif en fond du header */}
+        <div className="absolute inset-0 h-24 w-full overflow-hidden rounded-t-2xl">
+          <img src="/logo gif.gif" alt="Fond gif" className="w-full h-full object-cover opacity-90" />
         </div>
-        {/* Infos à droite, alignées verticalement */}
-        <div className="flex flex-col justify-end pb-2">
-          <h2 className="text-2xl font-semibold text-cyan-100 mb-1">{character.first_name} {character.last_name}</h2>
-          {character.profession && (
-            <p className="text-slate-400 mt-1">{character.profession}</p>
-          )}
-          {character.birth_date && (
-            <div className="text-sm text-slate-300">{format(new Date(character.birth_date), 'dd/MM/yyyy', { locale: fr })}</div>
-          )}
+        {/* Header flex */}
+        <div className="relative flex flex-row items-end gap-6 px-6 pt-6 pb-4 z-10">
+          {/* Photo à cheval sur le header */}
+          <div style={{position:'relative', top:'1rem'}}>
+            {character.avatar_url ? (
+              (() => {
+                let src = character.avatar_url;
+                if (src && src.length > 100 && !src.startsWith('data:image') && !src.startsWith('http') && !src.startsWith('/api')) {
+                  src = `data:image/png;base64,${src}`;
+                }
+                return <img 
+                  src={src} 
+                  alt={`${character.first_name} ${character.last_name}`}
+                  className="w-24 h-24 rounded-2xl object-cover ring-4 ring-cyan-400/80 shadow-xl shadow-cyan-500/40 cursor-pointer bg-slate-900 border-4 border-slate-900"
+                  style={{opacity:1, background:'#0f172a'}}
+                  onClick={() => setShowModal(true)}
+                  title="Agrandir la photo"
+                />;
+              })()
+            ) : (
+              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center ring-4 ring-cyan-400/80 shadow-xl shadow-cyan-500/40 border-4 border-slate-900 backdrop-blur-sm" style={{background:'#0f172a'}}>
+                <span className="text-3xl font-bold text-cyan-400">{initials}</span>
+              </div>
+            )}
+          </div>
+          {/* (Nom, prénom, métier supprimés du header comme demandé) */}
+          {/* (Groupe sanguin retiré du header comme demandé) */}
+          <div className="flex-1"></div>
+          {/* Bouton fermeture en overlay */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onClose}
+            className="absolute top-4 right-4 text-white/80 hover:text-white hover:bg-white/20 z-20"
+          >
+            <X className="w-5 h-5" />
+          </Button>
         </div>
       </div>
 
-      {/* Contenu principal sans doublon du groupe sanguin */}
+      {/* Contenu principal : nom/prénom/métier à gauche, groupe sanguin à droite, sur la même ligne */}
       <div className="pt-6 px-6 pb-6 relative z-10">
-        <div className="flex items-start justify-end">
+        <div className="flex flex-row items-center justify-between mb-2">
+          <div className="flex flex-col justify-center">
+            <h2 className="text-2xl font-semibold text-cyan-100 mb-1 whitespace-nowrap">{character.first_name} {character.last_name}</h2>
+            {character.profession && (
+              <p className="text-slate-400 mt-1">{character.profession}</p>
+            )}
+          </div>
           {character.blood_type && (
             <Badge className={`${bloodTypeColors[character.blood_type]} text-sm font-semibold px-3 py-1.5 shadow-lg`}>
               <Droplets className="w-3.5 h-3.5 mr-1.5" />
@@ -154,7 +157,7 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
               </div>
             </div>
           )}
-          </div>
+        </div>
 
         {character.medical_history && (
           <div className="mt-6 p-4 bg-pink-500/10 rounded-xl border border-pink-500/30 shadow-lg shadow-pink-500/10">
