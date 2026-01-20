@@ -51,12 +51,9 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none" />
       
       {/* Header compact avec photo et nom, style "fiche annotée" */}
-      <div className="relative w-full" style={{minHeight:'3.5rem'}}>
-        {/* Bande GIF ultra fine */}
-        <div className="absolute top-0 left-0 w-full h-12 overflow-hidden z-0">
-          <img src="/logo gif.gif" alt="Fond gif" className="w-full h-full object-cover opacity-80" style={{zIndex:1}} />
-        </div>
-        {/* Bouton fermeture */}
+      {/* Bande GIF fine en haut, sans impacter le header */}
+      <div className="w-full h-14 overflow-hidden relative">
+        <img src="/logo gif.gif" alt="Fond gif" className="w-full h-full object-cover opacity-80" />
         <Button 
           variant="ghost" 
           size="icon" 
@@ -65,41 +62,41 @@ export default function CharacterDetails({ character, onClose, trustedPersons = 
         >
           <X className="w-5 h-5" />
         </Button>
-        {/* Bloc photo + infos */}
-        <div className="flex items-center gap-4 px-6 relative z-10" style={{marginTop:'5rem'}}>
-          {/* Photo à cheval sur le GIF et le fond bleu, bien remontée */}
-          <div style={{position:'relative', top:'-4.5rem'}}>
-            {character.avatar_url ? (
-              (() => {
-                let src = character.avatar_url;
-                if (src && src.length > 100 && !src.startsWith('data:image') && !src.startsWith('http') && !src.startsWith('/api')) {
-                  src = `data:image/png;base64,${src}`;
-                }
-                return <img 
-                  src={src} 
-                  alt={`${character.first_name} ${character.last_name}`}
-                  className="w-24 h-24 rounded-2xl object-cover ring-4 ring-cyan-400/80 shadow-xl shadow-cyan-500/40 cursor-pointer bg-slate-900 border-4 border-slate-900"
-                  style={{opacity:1, background:'#0f172a'}}
-                  onClick={() => setShowModal(true)}
-                  title="Agrandir la photo"
-                />;
-              })()
-            ) : (
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center ring-4 ring-cyan-400/80 shadow-xl shadow-cyan-500/40 border-4 border-slate-900 backdrop-blur-sm" style={{background:'#0f172a'}}>
-                <span className="text-3xl font-bold text-cyan-400">{initials}</span>
-              </div>
-            )}
-          </div>
-          {/* Infos bien descendues */}
-          <div className="flex flex-col justify-end" style={{marginTop:'2.5rem'}}>
-            <h2 className="text-2xl font-semibold text-cyan-100 mb-1">{character.first_name} {character.last_name}</h2>
-            {character.profession && (
-              <p className="text-slate-400 mt-1">{character.profession}</p>
-            )}
-            {character.birth_date && (
-              <div className="text-sm text-slate-300">{format(new Date(character.birth_date), 'dd/MM/yyyy', { locale: fr })}</div>
-            )}
-          </div>
+      </div>
+      {/* Header principal bleu foncé, flex-row, photo à gauche, infos à droite */}
+      <div className="flex flex-row items-end gap-6 px-6 pt-0 pb-4 bg-transparent relative z-10" style={{marginTop:'-2.5rem'}}>
+        {/* Photo à cheval sur la bande GIF et le fond bleu foncé */}
+        <div style={{position:'relative', top:'-2.5rem'}}>
+          {character.avatar_url ? (
+            (() => {
+              let src = character.avatar_url;
+              if (src && src.length > 100 && !src.startsWith('data:image') && !src.startsWith('http') && !src.startsWith('/api')) {
+                src = `data:image/png;base64,${src}`;
+              }
+              return <img 
+                src={src} 
+                alt={`${character.first_name} ${character.last_name}`}
+                className="w-24 h-24 rounded-2xl object-cover ring-4 ring-cyan-400/80 shadow-xl shadow-cyan-500/40 cursor-pointer bg-slate-900 border-4 border-slate-900"
+                style={{opacity:1, background:'#0f172a'}}
+                onClick={() => setShowModal(true)}
+                title="Agrandir la photo"
+              />;
+            })()
+          ) : (
+            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center ring-4 ring-cyan-400/80 shadow-xl shadow-cyan-500/40 border-4 border-slate-900 backdrop-blur-sm" style={{background:'#0f172a'}}>
+              <span className="text-3xl font-bold text-cyan-400">{initials}</span>
+            </div>
+          )}
+        </div>
+        {/* Infos à droite, alignées verticalement */}
+        <div className="flex flex-col justify-end pb-2">
+          <h2 className="text-2xl font-semibold text-cyan-100 mb-1">{character.first_name} {character.last_name}</h2>
+          {character.profession && (
+            <p className="text-slate-400 mt-1">{character.profession}</p>
+          )}
+          {character.birth_date && (
+            <div className="text-sm text-slate-300">{format(new Date(character.birth_date), 'dd/MM/yyyy', { locale: fr })}</div>
+          )}
         </div>
       </div>
 
