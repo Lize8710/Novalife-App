@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { _id, reason, amount, patient } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     if (!_id || !reason || !amount) return res.status(400).json({ error: 'Champs requis manquants' });
     const { ObjectId } = require('mongodb');
-    const update = { reason, amount: parseFloat(amount) };
+    const update: { [key: string]: any } = { reason, amount: parseFloat(amount) };
     if (patient) update['patient'] = patient;
     const result = await collection.findOneAndUpdate(
       { _id: typeof _id === 'string' ? new ObjectId(_id) : _id },
