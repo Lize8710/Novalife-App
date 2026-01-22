@@ -17,7 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'POST') {
     // Créer une nouvelle facture
-    const { patientId, reason, amount, patient } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const { patientId, reason, amount } = body;
+    const patient = body.patient;
     if (!patientId || !reason || !amount) return res.status(400).json({ error: 'Champs requis manquants' });
     const now = new Date().toISOString();
     const facture = { patientId, reason, amount: parseFloat(amount), created_at: now };
