@@ -1,33 +1,31 @@
 
 "use client";
+
 import React, { useState, useEffect } from 'react';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState(undefined);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Charger les projets depuis le localStorage au démarrage (client only)
-  // Initialisation du state projets uniquement côté client
+  // Charger les projets depuis MongoDB via l'API
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = window.localStorage.getItem('novalife-projects');
-      if (saved) {
-        try {
-          setProjects(JSON.parse(saved));
-        } catch {
-          setProjects([]);
-        }
-      } else {
+    setLoading(true);
+    fetch('/api/projects')
+      .then(res => {
+        if (!res.ok) throw new Error('Erreur lors du chargement des projets');
+        return res.json();
+      })
+      .then(data => {
+        setProjects(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Impossible de charger les projets');
         setProjects([]);
-      }
-    }
+        setLoading(false);
+      });
   }, []);
-
-  // Sauvegarder les projets à chaque modification (client only)
-  useEffect(() => {
-    if (typeof window !== 'undefined' && Array.isArray(projects)) {
-      window.localStorage.setItem('novalife-projects', JSON.stringify(projects));
-    }
-  }, [projects]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null); // id du projet en édition ou null
   const [newProject, setNewProject] = useState({
@@ -52,42 +50,70 @@ export default function ProjectsPage() {
     setModalOpen(true);
   };
 
-  const handleAddOrEditProject = () => {
+  const handleAddOrEditProject = async () => {
     if (!newProject.title.trim()) return;
     const cleanLinks = newProject.links ? newProject.links.filter(l => l.label.trim() && l.url.trim()) : [];
+    const payload = {
+      ...newProject,
+      members: newProject.members.filter(m => m.trim() !== ''),
+      links: cleanLinks,
+      image: newProject.image,
+      id: editingProject || Date.now().toString(),
+    };
     if (editingProject) {
-      setProjects(projects.map(p =>
-        p.id === editingProject
-          ? { ...p, ...newProject, members: newProject.members.filter(m => m.trim() !== ''), links: cleanLinks, image: newProject.image }
-          : p
-      ));
+      // Update
+      const res = await fetch('/api/projects', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: editingProject, ...payload })
+      });
+      if (res.ok) {
+        setProjects(projects.map(p => p.id === editingProject ? { ...p, ...payload } : p));
+      }
     } else {
-      setProjects([
-        ...projects,
-        {
-          ...newProject,
-          members: newProject.members.filter(m => m.trim() !== ''),
-          links: cleanLinks,
-          image: newProject.image,
-          id: Date.now()
-        }
-      ]);
+      // Create
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const created = await res.json();
+        setProjects([created, ...projects]);
+      }
     }
     setNewProject({ title: '', description: '', manager: '', members: [''], links: [{ label: '', url: '' }], image: '' });
     setModalOpen(false);
     setEditingProject(null);
   };
 
-  const handleDeleteProject = (id) => {
-    setProjects(projects.filter(p => p.id !== id));
+  const handleDeleteProject = async (id) => {
+    const res = await fetch('/api/projects', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    if (res.ok) {
+      setProjects(projects.filter(p => p.id !== id));
+    }
   };
 
-  if (!Array.isArray(projects)) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900 text-cyan-200">
         <div>Chargement des projets...</div>
       </div>
     );
+  }
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-rose-300">
+        <div>{error}</div>
+      </div>
+    );
+  }
+  if (!Array.isArray(projects)) {
+    return null;
   }
 
   return (

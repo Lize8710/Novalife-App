@@ -42,6 +42,7 @@ export const projectMethods = {
       const client = await clientPromise;
       const db = client.db();
       const result = await db.collection('projects').insertOne(project);
+      console.log('[DEBUG] Projet inséré:', JSON.stringify(project), 'ID:', result.insertedId);
       return result.insertedId;
     } catch (error) {
       console.error('Error creating project:', error);

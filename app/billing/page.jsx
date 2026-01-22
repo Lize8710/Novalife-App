@@ -36,28 +36,26 @@ export default function BillingPage() {
   }, []);
 
 
-  // Charger les factures depuis le localStorage au démarrage
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = window.localStorage.getItem('novalife-invoices');
-      if (saved) {
-        try {
-          setInvoices(JSON.parse(saved));
-        } catch {
-          setInvoices([]);
-        }
-      } else {
-        setInvoices([]);
-      }
-    }
-  }, []);
 
-  // Sauvegarder les factures à chaque modification
+  // Fonction pour charger les factures depuis MongoDB via l'API
+  const fetchInvoices = () => {
+    setInvoices(undefined);
+    fetch('/api/invoices')
+      .then(res => {
+        if (!res.ok) throw new Error('Erreur lors du chargement des factures');
+        return res.json();
+      })
+      .then(data => {
+        setInvoices(data);
+      })
+      .catch(() => {
+        setInvoices([]);
+      });
+  };
+
   useEffect(() => {
-    if (typeof window !== 'undefined' && Array.isArray(invoices)) {
-      window.localStorage.setItem('novalife-invoices', JSON.stringify(invoices));
-    }
-  }, [invoices]);
+    fetchInvoices();
+  }, []);
 
   if (!Array.isArray(invoices)) {
     return (
@@ -78,35 +76,62 @@ export default function BillingPage() {
     setModalOpen(true);
   };
 
-  const handleAddOrEditInvoice = () => {
+  const handleAddOrEditInvoice = async () => {
     if (!newInvoice.reason.trim() || !newInvoice.amount || !newInvoice.patient) return;
     if (editingInvoice) {
-      setInvoices(invoices.map(inv =>
-        inv._id === editingInvoice
-          ? { ...inv, ...newInvoice }
-          : inv
-      ));
+      const res = await fetch('/api/invoices', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: editingInvoice, ...newInvoice })
+      });
+      if (res.ok) {
+        fetchInvoices();
+      }
     } else {
-      setInvoices([
-        ...invoices,
-        {
-          ...newInvoice,
-          _id: Date.now(),
-          created_at: new Date().toISOString()
-        }
-      ]);
+      const patientObj = patients.find(p => (p.first_name + ' ' + p.last_name) === newInvoice.patient);
+      const patientId = patientObj ? (patientObj._id || patientObj.id) : undefined;
+      const res = await fetch('/api/invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          patientId,
+          reason: newInvoice.reason,
+          amount: newInvoice.amount,
+          patient: newInvoice.patient
+        })
+      });
+      if (res.ok) {
+        fetchInvoices();
+      }
     }
     setNewInvoice({ reason: '', amount: '', patient: '', created_at: '' });
     setModalOpen(false);
     setEditingInvoice(null);
   };
 
-  const handleDeleteInvoice = (id) => {
-    setInvoices(invoices.filter(inv => inv._id !== id));
+  const handleDeleteInvoice = async (id) => {
+    const res = await fetch('/api/invoices', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ _id: id })
+    });
+    if (res.ok) {
+      fetchInvoices();
+    }
   };
 
+  // Associer le nom du patient à chaque facture si manquant
+  const invoicesWithPatient = invoices.map(inv => {
+    if (inv.patient) return inv;
+    const patientObj = patients.find(p => (p._id === inv.patientId || p.id === inv.patientId));
+    return {
+      ...inv,
+      patient: patientObj ? (patientObj.first_name + ' ' + patientObj.last_name) : ''
+    };
+  });
+
   // Filtrer les factures selon la recherche
-  const filteredInvoices = invoices.filter(inv =>
+  const filteredInvoices = invoicesWithPatient.filter(inv =>
     inv.patient && inv.patient.toLowerCase().includes(search.toLowerCase())
   );
 
