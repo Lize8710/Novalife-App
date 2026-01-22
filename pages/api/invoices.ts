@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const patient = body.patient;
     if (!patientId || !reason || !amount) return res.status(400).json({ error: 'Champs requis manquants' });
     const now = new Date().toISOString();
-    const facture = { patientId, reason, amount: parseFloat(amount), created_at: now };
+    const facture: any = { patientId, reason, amount: parseFloat(amount), created_at: now };
     if (patient) facture.patient = patient;
     const result = await collection.insertOne(facture);
     return res.status(201).json({ _id: result.insertedId, ...facture });
