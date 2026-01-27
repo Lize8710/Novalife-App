@@ -57,6 +57,7 @@ import { Plus, Search, Loader2, Users } from 'lucide-react';
 import CalendarButton from './CalendarButton';
 import ProjectNavButton from './ProjectNavButton';
 import BillingNavButton from './BillingNavButton';
+import CoronerNavButton from './CoronerNavButton';
 
 
 import CharacterCard from '@/components/Characters/CharactersCard';
@@ -184,6 +185,8 @@ export default function Characters() {
                 <ProjectNavButton />
                 {/* Billing Icon Button */}
                 <BillingNavButton />
+                {/* Coroner Icon Button */}
+                <CoronerNavButton />
               </div>
             </div>
             <Button 
