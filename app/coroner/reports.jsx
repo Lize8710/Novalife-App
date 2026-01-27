@@ -34,9 +34,17 @@ export default function CoronerReportsPage() {
     setDeleting(id);
     setDeleteError("");
     try {
-      const res = await fetch(`/api/coroner?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/coroner`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ _id: id })
+      });
       if (!res.ok) throw new Error("Erreur lors de la suppression");
-      setReports((prev) => prev.filter((r) => r._id !== id));
+      // Recharge la liste depuis l'API pour éviter la réapparition
+      const refreshed = await fetch("/api/coroner");
+      if (refreshed.ok) {
+        setReports(await refreshed.json());
+      }
       setSelected(null);
     } catch (e) {
       setDeleteError(e.message || "Erreur inconnue");
